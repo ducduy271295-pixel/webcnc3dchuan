@@ -1,0 +1,2804 @@
+import React, { useState, useMemo } from 'react';
+import { 
+  Heart, 
+  BookOpen, 
+  Grid, 
+  Info, 
+  ShieldAlert, 
+  Search, 
+  ChevronRight, 
+  ArrowLeft, 
+  Star, 
+  ShoppingBag, 
+  CheckCircle, 
+  User, 
+  Clock, 
+  Sparkles, 
+  AlertCircle,
+  ThumbsUp,
+  Mail,
+  Phone,
+  MapPin,
+  ExternalLink,
+  Menu,
+  X,
+  Settings,
+  Plus,
+  Trash2,
+  Edit3,
+  TrendingUp,
+  MousePointer,
+  DollarSign,
+  Layers,
+  FileText,
+  Eye,
+  Check,
+  Languages
+} from 'lucide-react';
+
+// Bilingual structure for initial products
+const INITIAL_PRODUCTS = [
+  {
+    id: 'digest-01',
+    name: {
+      th: 'Bio-Digest Pro (โพรไบโอติกส์สูตรเข้มข้น)',
+      vi: 'Bio-Digest Pro (Men vi sinh công thức đậm đặc)'
+    },
+    category: 'digestive',
+    categoryLabel: {
+      th: 'ระบบย่อยอาหารและลำไส้',
+      vi: 'Hệ tiêu hóa & Đường ruột'
+    },
+    shortDesc: {
+      th: 'ปรับสมดุลจุลินทรีย์ในลำไส้ ช่วยให้ระบบย่อยอาหารทำงานได้ดีขึ้น ลดอาการท้องอืดและท้องผูก',
+      vi: 'Cân bằng hệ vi sinh đường ruột, hỗ trợ hệ tiêu hóa hoạt động tốt hơn, giảm đầy hơi và táo bón'
+    },
+    price: '490',
+    rating: 4.8,
+    reviews: 124,
+    image: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&q=80&w=600',
+    benefits: {
+      th: [
+        'เติมจุลินทรีย์ดีมากกว่า 10,000 ล้าน CFU เพื่อสร้างสมดุลในลำไส้',
+        'ช่วยลดอาการท้องอืด ท้องผูก หรือท้องเสียจากการขับถ่ายไม่ปกติ',
+        'เพิ่มประสิทธิภาพการดูดซึมสารอาหารและวิตามินในแต่ละวัน',
+        'เสริมสร้างภูมิคุ้มกันของร่างกายซึ่งเริ่มต้นที่ระบบทางเดินอาหาร'
+      ],
+      vi: [
+        'Bổ sung hơn 10 tỷ lợi khuẩn CFU để thiết lập sự cân bằng trong đường ruột',
+        'Giảm triệu chứng đầy bụng, táo bón hoặc tiêu chảy do rối loạn tiêu hóa',
+        'Tăng hiệu quả hấp thụ chất dinh dưỡng và vitamin hàng ngày',
+        'Tăng cường hệ miễn dịch của cơ thể, bắt nguồn từ hệ tiêu hóa khỏe mạnh'
+      ]
+    },
+    ingredients: {
+      th: [
+        'Lactobacillus acidophilus: 3 x 10^9 CFU',
+        'Bifidobacterium lactis: 2 x 10^9 CFU',
+        'Inulin (Prebiotic): 150 มก.',
+        'Zinc Gluconate: 10 มก.'
+      ],
+      vi: [
+        'Lactobacillus acidophilus: 3 x 10^9 CFU',
+        'Bifidobacterium lactis: 2 x 10^9 CFU',
+        'Inulin (Prebiotic): 150 mg',
+        'Kẽm Gluconate: 10 mg'
+      ]
+    },
+    suitableFor: {
+      th: [
+        'ผู้ที่มีปัญหาระบบขับถ่ายแปรปรวน ท้องอืด ท้องเฟ้อบ่อยครั้ง',
+        'ผู้ที่เพิ่งหายป่วย หรือใช้ยาปฏิชีวนะติดต่อกันเป็นเวลานาน',
+        'เด็กอายุ 6 ปีขึ้นไปและผู้ใหญ่ที่รับประทานอาหารแล้วดูดซึมยาก'
+      ],
+      vi: [
+        'Người bị rối loạn tiêu hóa, thường xuyên đầy hơi, chướng bụng',
+        'Người mới ốm dậy hoặc sử dụng kháng sinh trong thời gian dài',
+        'Trẻ em trên 6 tuổi và người lớn gặp khó khăn trong việc hấp thụ thức ăn'
+      ]
+    },
+    affiliateUrl: 'https://shopee.co.th'
+  },
+  {
+    id: 'men-30-01',
+    name: {
+      th: 'Oyster Power (สารสกัดจากหอยนางรมเข้มข้น)',
+      vi: 'Oyster Power (Tinh chất hàu biển đậm đặc)'
+    },
+    category: 'men30',
+    categoryLabel: {
+      th: 'ผู้ชายวัย 30+',
+      vi: 'Sức khỏe nam giới 30+'
+    },
+    shortDesc: {
+      th: 'เสริมสร้างสมรรถภาพทางกาย เพิ่มความกระปรี้กระเปร่า และดูแลสุขภาพเพศชายวัยทำงาน',
+      vi: 'Tăng cường thể lực, tăng sự dẻo dai và chăm sóc sức khỏe nam giới trong độ tuổi làm việc'
+    },
+    price: '650',
+    rating: 4.9,
+    reviews: 215,
+    image: 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?auto=format&fit=crop&q=80&w=600',
+    benefits: {
+      th: [
+        'กระตุ้นการสร้างฮอร์โมนเพศชาย (Testosterone) อย่างเป็นธรรมชาติ',
+        'ช่วยลดความเหนื่อยล้าจากการทำงานหนักและความเครียดสะสม',
+        'ช่วยบำรุงสุขภาพสเปิร์ม เพิ่มโอกาสการมีบุตรและบำรุงระบบสืบพันธุ์',
+        'ลดความเสี่ยงภาวะหมดประจำเดือนของเพศชายก่อนวัยอันควร'
+      ],
+      vi: [
+        'Kích thích sản sinh hormone nam giới (Testosterone) một cách tự nhiên',
+        'Giảm mệt mỏi do làm việc cường độ cao và căng thẳng tích tụ',
+        'Cải thiện chất lượng tinh trùng, tăng khả năng thụ thai và bảo vệ hệ sinh sản',
+        'Giảm nguy cơ mãn dục nam sớm trước tuổi'
+      ]
+    },
+    ingredients: {
+      th: [
+        'สารสกัดจากหอยนางรม (New Zealand Oyster Extract): 350 มก.',
+        'ซิงค์ ออกไซด์ (Zinc Oxide): 15 มก.',
+        'สารสกัดจากโสม (Ginseng Extract): 50 มก.',
+        'แอล-อาร์จินีน (L-Arginine): 100 มก.'
+      ],
+      vi: [
+        'Chiết xuất hàu New Zealand (Oyster Extract): 350 mg',
+        'Kẽm Oxit (Zinc Oxide): 15 mg',
+        'Chiết xuất nhân sâm (Ginseng Extract): 50 mg',
+        'L-Arginine: 100 mg'
+      ]
+    },
+    suitableFor: {
+      th: [
+        'ผู้ชายอายุ 30 ปีขึ้นไปที่เริ่มรู้สึกอ่อนเพลีย ขาดพลังงาน',
+        'ผู้ที่ต้องการฟื้นฟูสมรรถภาพร่างกายและเพิ่มความมั่นใจ',
+        'ผู้ที่มีพฤติกรรมการทานอาหารไม่เพียงพอ ขาดสารอาหารสำคัญกลุ่มสังกะสี'
+      ],
+      vi: [
+        'Nam giới trên 30 tuổi bắt đầu cảm thấy mệt mỏi, thiếu hụt năng lượng',
+        'Người muốn phục hồi thể lực và lấy lại sự tự tin',
+        'Người có chế độ ăn uống không đầy đủ, thiếu hụt kẽm và vi chất thiết yếu'
+      ]
+    },
+    affiliateUrl: 'https://www.lazada.co.th'
+  },
+  {
+    id: 'joint-01',
+    name: {
+      th: 'FlexiMove Gold (บำรุงข้อต่อและกระดูก)',
+      vi: 'FlexiMove Gold (Bổ khớp & Bảo vệ xương sụn)'
+    },
+    category: 'joints',
+    categoryLabel: {
+      th: 'สุขภาพข้อต่อและกระดูก',
+      vi: 'Xương khớp & Khớp động'
+    },
+    shortDesc: {
+      th: 'ฟื้นฟูกระดูกอ่อนผิวข้อ ลดอาการปวดข้อเข่า ข้อศอก และเพิ่มน้ำหล่อเลี้ยงข้อต่ออย่างปลอดภัย',
+      vi: 'Phục hồi sụn khớp, giảm đau khớp gối, khuỷu tay và tăng cường dịch khớp bôi trơn an toàn'
+    },
+    price: '790',
+    rating: 4.7,
+    reviews: 189,
+    image: 'https://images.unsplash.com/photo-1550572017-edd951b55104?auto=format&fit=crop&q=80&w=600',
+    benefits: {
+      th: [
+        'กระตุ้นการสร้างกระดูกอ่อนผิวข้อ ชะลอความเสื่อมตามวัย',
+        'เพิ่มน้ำหล่อเลี้ยงในข้อต่อ ช่วยให้เคลื่อนไหวได้อย่างยืดหยุ่นไม่ติดขัด',
+        'บรรเทาอาการปวดตึงบริเวณข้อเข่า ข้อเท้า หรือออฟฟิศซินโดรม',
+        'ปกป้องเนื้อเยื่อบริเวณข้อต่อจากการกระแทกและการออกกำลังกาย'
+      ],
+      vi: [
+        'Kích thích tái tạo sụn khớp, làm chậm quá trình thoái hóa khớp theo tuổi tác',
+        'Tăng chất nhờn bôi trơn khớp, giúp vận động linh hoạt không đau cứng',
+        'Làm dịu các cơn đau mỏi khớp gối, khớp cổ chân hoặc đau mỏi vai gáy văn phòng',
+        'Bảo vệ các mô liên kết quanh khớp khỏi chấn thương khi tập luyện'
+      ]
+    },
+    ingredients: {
+      th: [
+        'กลูโคซามีน ซัลเฟต (Glucosamine Sulfate): 1500 มก.',
+        'คอนดรอยติน ซัลเฟต (Chondroitin Sulfate): 200 มก.',
+        'เอ็มเอสเอ็ม (MSM): 300 มก.',
+        'คอลลาเจน ไทพ์ ทู (Collagen Type II): 100 มก.'
+      ],
+      vi: [
+        'Glucosamine Sulfate: 1500 mg',
+        'Chondroitin Sulfate: 200 mg',
+        'MSM (Methylsulfonylmethane): 300 mg',
+        'Collagen Type II: 100 mg'
+      ]
+    },
+    suitableFor: {
+      th: [
+        'ผู้สูงอายุที่มีปัญหาข้อเข่าเสื่อม ปวดข้อต่อเวลาเดินหรือขึ้นบันได',
+        'ผู้ที่มีอาการข้อฝืด ข้อตึง เคลื่อนไหวลำบากในตอนเช้า',
+        'นักกีฬาหรือผู้ที่ออกกำลังกายหนักที่ต้องการป้องกันการบาดเจ็บของข้อต่อ'
+      ],
+      vi: [
+        'Người cao tuổi bị thoái hóa khớp, đau khớp khi di chuyển hoặc lên xuống cầu thang',
+        'Người hay bị cứng khớp, khó vận động linh hoạt vào buổi sáng',
+        'Vận động viên hoặc người chơi thể thao cường độ cao muốn bảo vệ khớp'
+      ]
+    },
+    affiliateUrl: 'https://shopee.co.th'
+  },
+  {
+    id: 'sleep-01',
+    name: {
+      th: 'SleepWell Herbal (สมุนไพรช่วยนอนหลับสบาย)',
+      vi: 'SleepWell Herbal (Thảo dược hỗ trợ giấc ngủ sâu)'
+    },
+    category: 'sleep',
+    categoryLabel: {
+      th: 'การนอนหลับและผ่อนคลาย',
+      vi: 'Giấc ngủ & Thư giãn thần kinh'
+    },
+    shortDesc: {
+      th: 'ช่วยให้เข้านอนได้ง่ายขึ้นตามธรรมชาติ หลับสนิทตลอดคืน ตื่นมาพร้อมความสดชื่นไม่เบลอ',
+      vi: 'Giúp dễ đi vào giấc ngủ một cách tự nhiên, ngủ sâu giấc cả đêm, thức dậy tỉnh táo không đau đầu'
+    },
+    price: '390',
+    rating: 4.6,
+    reviews: 95,
+    image: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=600',
+    benefits: {
+      th: [
+        'ลดความวิตกกังวล ความเครียดสะสม และช่วยให้ระบบประสาทผ่อนคลายลึก',
+        'ปรับปรุงคุณภาพการนอนหลับ ป้องกันการสะดุ้งตื่นกลางดึก',
+        'ปลอดภัย ไม่ทำให้อ่อนเพลียหรือปวดหัวเมื่อตื่นนอนในตอนเช้า',
+        'ช่วยปรับนาฬิกาชีวิตสำหรับผู้ที่ทำงานเป็นกะหรือมีอาการเจ็ทแลก (Jetlag)'
+      ],
+      vi: [
+        'Giảm lo âu, căng thẳng tích tụ và giúp hệ thần kinh thư giãn sâu',
+        'Cải thiện chất lượng giấc ngủ, hạn chế tình trạng giật mình tỉnh giấc giữa đêm',
+        'An toàn, không gây mệt mỏi hay lờ đờ khi thức dậy vào buổi sáng',
+        'Điều hòa đồng hồ sinh học cho người làm ca đêm hoặc bị lệch múi giờ (Jetlag)'
+      ]
+    },
+    ingredients: {
+      th: [
+        'เมลาโทนิน (Melatonin): 3 มก.',
+        'สารสกัดจากดอกคาโมมายล์ (Chamomile Extract): 100 มก.',
+        'สารสกัดจากรากวาเลเรียน (Valerian Root Extract): 150 มก.',
+        'แอล-ธีอะนีน (L-Theanine): 50 มก.'
+      ],
+      vi: [
+        'Melatonin: 3 mg',
+        'Chiết xuất hoa cúc La Mã (Chamomile): 100 mg',
+        'Chiết xuất rễ cây nữ lang (Valerian): 150 mg',
+        'L-Theanine: 50 mg'
+      ]
+    },
+    suitableFor: {
+      th: [
+        'ผู้ที่มีปัญหาหลับยาก หลับไม่สนิท พลิกตัวไปมาตลอดคืน',
+        'ผู้ที่เครียดจากการทำงาน สมองไม่ยอมหยุดคิดก่อนนอน',
+        'ผู้สูงอายุที่มีการหลั่งฮอร์โมนเมลาโทนินลดลงตามธรรมชาติ'
+      ],
+      vi: [
+        'Người khó đi vào giấc ngủ, ngủ chập chờn, hay trằn trọc cả đêm',
+        'Người căng thẳng đầu óc, suy nghĩ nhiều trước khi đi ngủ',
+        'Người lớn tuổi bị suy giảm hormone Melatonin tự nhiên theo thời gian'
+      ]
+    },
+    affiliateUrl: 'https://www.lazada.co.th'
+  },
+  {
+    id: 'weight-01',
+    name: {
+      th: 'SlimFit Organic Tea (ชาสมุนไพรควบคุมน้ำหนัก)',
+      vi: 'SlimFit Organic Tea (Trà thảo mộc hữu cơ kiểm soát vóc dáng)'
+    },
+    category: 'weight',
+    categoryLabel: {
+      th: 'การควบคุมน้ำหนักและสัดส่วน',
+      vi: 'Kiểm soát cân nặng & Vóc dáng'
+    },
+    shortDesc: {
+      th: 'เร่งการเผาผลาญไขมันส่วนเกิน ดีท็อกซ์ของเสียในระบบขับถ่าย และช่วยควบคุมความอยากอาหาร',
+      vi: 'Đẩy nhanh quá trình đốt cháy mỡ thừa, thanh lọc độc tố đường ruột và giảm cảm giác thèm ăn'
+    },
+    price: '350',
+    rating: 4.5,
+    reviews: 87,
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=600',
+    benefits: {
+      th: [
+        'ช่วยเพิ่มอัตราการเผาผลาญแคลอรีและไขมันสะสมในร่างกาย',
+        'ลดการดูดซึมไขมันและแป้งจากมื้ออาหารหลัก',
+        'ลดความอยากของหวานและควบคุมอาการหิวจุกจิกระหว่างวัน',
+        'ช่วยขับสารพิษออกจากระบบทางเดินอาหาร ส่งผลให้ผิวพรรณสดใสขึ้น'
+      ],
+      vi: [
+        'Tăng cường tốc độ trao đổi chất, đẩy mạnh tiêu hao calo và mỡ thừa',
+        'Hạn chế hấp thu chất béo xấu và tinh bột từ bữa ăn chính',
+        'Giảm cảm giác thèm đồ ngọt và kiểm soát các cơn đói vặt trong ngày',
+        'Hỗ trợ thanh lọc hệ tiêu hóa, giúp da dẻ mịn màng, tươi trẻ hơn'
+      ]
+    },
+    ingredients: {
+      th: [
+        'สารสกัดจากชาเขียว (Green Tea - EGCG): 250 มก.',
+        'สารสกัดจากใบบัวแห้ง (Lotus Leaf): 150 มก.',
+        'สารสกัดจากส้มแขก (Garcinia Extract): 200 มก.',
+        'หญ้าหวานออร์แกนิกพอเหมาะ'
+      ],
+      vi: [
+        'Chiết xuất trà xanh giàu EGCG: 250 mg',
+        'Chiết xuất lá sen khô: 150 mg',
+        'Chiết xuất quả bứa (Garcinia): 200 mg',
+        'Cỏ ngọt tự nhiên vừa đủ'
+      ]
+    },
+    suitableFor: {
+      th: [
+        'ผู้ที่มีปัญหาน้ำหนักเกิน ต้องการตัวช่วยลดสัดส่วนแบบปลอดภัยจากธรรมชาติ',
+        'ผู้ที่มีปัญหาระบบเผาผลาญทำงานช้า หรือมีไขมันส่วนเกินบริเวณหน้าท้องและต้นขา',
+        'ผู้ที่ต้องการดีท็อกซ์ของเสียสะสมในลำไส้อย่างอ่อนโยน'
+      ],
+      vi: [
+        'Người thừa cân, muốn cải thiện số đo cơ thể một cách an toàn từ thảo mộc',
+        'Người có cơ địa khó giảm, chuyển hóa kém hoặc tích mỡ vùng bụng đùi',
+        'Người muốn thanh lọc cơ thể nhẹ nhàng hàng ngày'
+      ]
+    },
+    affiliateUrl: 'https://shopee.co.th'
+  },
+  {
+    id: 'liver-01',
+    name: {
+      th: 'DetoxLiver Max (อาหารเสริมดูแลและล้างสารพิษตับ)',
+      vi: 'DetoxLiver Max (Bổ gan & Thanh lọc thải độc tế bào gan)'
+    },
+    category: 'liver',
+    categoryLabel: {
+      th: 'การดีท็อกซ์ตับและไต',
+      vi: 'Thải độc gan & Thận'
+    },
+    shortDesc: {
+      th: 'ปกป้องเซลล์ตับ ฟื้นฟูค่าเอนไซม์ตับ และเสริมการทำงานของตับในการขับสารพิษตกค้าง',
+      vi: 'Bảo vệ tế bào gan, phục hồi chỉ số men gan ổn định và tăng cường chức năng đào thải độc tố'
+    },
+    price: '520',
+    rating: 4.8,
+    reviews: 142,
+    image: 'https://images.unsplash.com/photo-1626754224029-dd947efbc28b?auto=format&fit=crop&q=80&w=600',
+    benefits: {
+      th: [
+        'ช่วยปกป้องตับจากความเสียหายที่เกิดจากแอลกอฮอล์ ยาเคมี และสารพิษต่างๆ',
+        'ลดระดับเอนไซม์ตับที่สูงผิดปกติ ส่งเสริมการสร้างเซลล์ตับใหม่',
+        'ลดอาการคันตามผิวหนัง ร้อนใน และสิวอักเสบที่เกิดจากตับทำงานไม่ปกติ',
+        'ช่วยเพิ่มระดับกลูตาไธโอนธรรมชาติในตับเพื่อขับสารพิษได้ดียิ่งขึ้น'
+      ],
+      vi: [
+        'Bảo vệ gan khỏi các tác hại từ rượu bia, hóa chất và thực phẩm bẩn',
+        'Hỗ trợ hạ men gan cao, thúc đẩy quá trình tái tạo các tế bào gan mới khỏe mạnh',
+        'Giảm các triệu chứng mẩn ngứa da, nóng trong và mụn trứng cá do suy giảm chức năng gan',
+        'Thúc đẩy sản sinh Glutathione tự nhiên trong gan để đào thải độc tố hiệu quả'
+      ]
+    },
+    ingredients: {
+      th: [
+        'ซิลิมาริน สารสกัดจากมิลค์ทิสเซิล (Milk Thistle): 140 มก.',
+        'สารสกัดจากอาร์ติโชก (Artichoke Extract): 100 มก.',
+        'แอล-อาร์จินีน (L-Arginine): 150 มก.',
+        'วิตามินกลุ่มบีรวมพอเหมาะ'
+      ],
+      vi: [
+        'Silymarin (Chiết xuất cây kế sữa): 140 mg',
+        'Chiết xuất Atiso (Artichoke): 100 mg',
+        'L-Arginine: 150 mg',
+        'Vitamin nhóm B vừa đủ'
+      ]
+    },
+    suitableFor: {
+      th: [
+        'ผู้ที่ดื่มเครื่องดื่มแอลกอฮอล์หรือสูบบุหรี่เป็นประจำ',
+        'ผู้ที่ทานยาต้านโรคเรื้อรังติดต่อกันเป็นเวลานานจนกังวลเรื่องสารตกค้าง',
+        'ผู้ที่มีอาการเหนื่อยง่าย อ่อนเพลียเรื้อรัง หน้าตาหมองคล้ำ หรือตาเหลือง'
+      ],
+      vi: [
+        'Người thường xuyên sử dụng rượu bia, thuốc lá',
+        'Người phải dùng thuốc tây dài ngày lo ngại gánh nặng độc tố tích tụ lên gan',
+        'Người hay bị mệt mỏi, uể oải, da sạm, nóng trong người hoặc vàng mắt'
+      ]
+    },
+    affiliateUrl: 'https://www.lazada.co.th'
+  }
+];
+
+// Bilingual structure for blog posts
+const INITIAL_BLOG_POSTS = [
+  {
+    id: 'blog-01',
+    title: {
+      th: '5 นิสัยตอนเช้าเพื่อระบบย่อยอาหารที่ดีและสุขภาพดีตลอดทั้งวัน',
+      vi: '5 Thói quen buổi sáng giúp hệ tiêu hóa khỏe mạnh cả ngày'
+    },
+    category: {
+      th: 'สุขภาพระบบย่อยอาหาร',
+      vi: 'Sức khỏe Tiêu hóa'
+    },
+    summary: {
+      th: 'ระบบย่อยอาหารเปรียบเสมือนสมองที่สองของร่างกาย เรียนรู้ 5 ขั้นตอนง่ายๆ ในตอนเช้าเพื่อปลุกการทำงานของระบบขับถ่ายและเติมพลังงานชีวิต',
+      vi: 'Hệ tiêu hóa được ví như bộ não thứ hai của cơ thể. Tìm hiểu 5 bước đơn giản vào buổi sáng để kích hoạt hệ đường ruột hoạt động trơn tru.'
+    },
+    date: '18/05/2026',
+    readTime: {
+      th: 'อ่าน 5 นาที',
+      vi: 'Đọc 5 phút'
+    },
+    author: {
+      th: 'เภสัชกรหญิง มินตรา',
+      vi: 'Dược sĩ Minh Trà'
+    },
+    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800',
+    content: {
+      th: `ระบบย่อยอาหารที่แข็งแรงคือจุดเริ่มต้นของการมีภูมิคุ้มกันที่ดีเยี่ยมและอารมณ์ที่แจ่มใส หลังจากร่างกายได้พักผ่อนและซ่อมแซมตัวเองตลอดทั้งคืน เราจึงต้องการการกระตุ้นที่อ่อนโยนและถูกวิธีเพื่อสตาร์ทระบบขับถ่ายให้ทำงานได้อย่างราบรื่น
+
+นี่คือ 5 นิสัยตอนเช้าที่ทำตามได้ง่ายมากๆ แต่ให้ผลลัพธ์ที่ยอดเยี่ยมต่อสุขภาพ:
+
+### 1. ดื่มน้ำอุ่นทันทีหลังจากตื่นนอน
+การดื่มน้ำอุ่น (ประมาณ 250-300 มล.) ทันทีจะช่วยล้างสารตกค้างในลำไส้ กระตุ้นการบีบตัวของทางเดินอาหาร และขับของเสียที่สะสมไว้ออกมาได้ง่ายขึ้น
+
+### 2. ยืดเหยียดร่างกายเบาๆ 5-10 นาที
+การบิดลำตัวเบาๆ หรือโยคะท่าง่ายๆ สามารถช่วยนวดอวัยวะภายในช่องท้อง กระตุ้นการไหลเวียนโลหิต และช่วยให้ระบบอาหารเคลื่อนตัวได้ดี
+
+### 3. ห้ามข้ามมื้อเช้าเด็ดขาด
+มื้อเช้าเป็นมื้อที่สำคัญที่สุดเพื่อส่งพลังงานไปเลี้ยงเซลล์และช่วยกระตุ้นการทำงานของน้ำย่อยอย่างสม่ำเสมอ หลีกเลี่ยงของทอดของมัน
+
+### 4. เสริมโพรไบโอติกส์จุลินทรีย์ดีในตอนเช้า
+การรับประทานโพรไบโอติกส์ (Probiotics) คุณภาพดีในตอนเช้าช่วยเสริมเกราะป้องกันในลำไส้ ยับยั้งจุลินทรีย์ตัวร้าย
+
+### 5. ฝึกขับถ่ายให้เป็นเวลาเดียวกันในทุกเช้า
+การฝึกขับถ่ายในตอนเช้าจะช่วยสร้างการจดจำตามธรรมชาติของร่างกาย (Biological Clock) ลดปัญหาระบบขับถ่ายอุดตันหรือท้องผูกเรื้อรัง`,
+      vi: `Một hệ tiêu hóa khỏe mạnh là nền tảng của một hệ miễn dịch tuyệt vời và tinh thần sảng khoái. Sau khi cơ thể nghỉ ngơi và tự phục hồi suốt đêm, chúng ta cần những kích thích nhẹ nhàng và đúng cách để khởi động hệ thống tiêu hóa một cách trơn tru.
+
+Dưới đây là 5 thói quen đơn giản buổi sáng mang lại hiệu quả tuyệt vời cho sức khỏe:
+
+### 1. Uống ngay một ly nước ấm sau khi thức dậy
+Uống một ly nước ấm (khoảng 250-300ml) ngay sau khi ngủ dậy giúp rửa trôi các chất cặn bã trong ruột, kích thích nhu động ruột và thải chất độc tích tụ dễ dàng hơn.
+
+### 2. Co duỗi cơ thể nhẹ nhàng 5-10 phút
+Không cần bài tập nặng, chỉ cần vài động tác vặn mình hoặc yoga đơn giản sẽ mát-xa các cơ quan nội tạng, thúc đẩy tuần hoàn máu và kích thích chuyển động ruột tốt hơn.
+
+### 3. Tuyệt đối không bỏ bữa sáng
+Bữa sáng là bữa ăn quan trọng nhất để cung cấp năng lượng cho tế bào và kích hoạt dịch vị tiêu hóa đều đặn. Hãy chọn bữa sáng giàu xơ và protein tốt, tránh đồ chiên rán nhiều dầu mỡ.
+
+### 4. Bổ sung men vi sinh Probiotics vào buổi sáng
+Nạp vào cơ thể men vi sinh chất lượng tốt vào buổi sáng giúp củng cố "hàng rào" bảo vệ đường ruột, ức chế vi khuẩn có hại phát triển.
+
+### 5. Tập thói quen đi vệ sinh vào khung giờ cố định
+Huấn luyện cơ thể đi tiêu vào buổi sáng giúp thiết lập chiếc đồng hồ sinh học tự nhiên, giảm thiểu tình trạng táo bón kinh niên.`
+    },
+    relatedProducts: ['digest-01']
+  },
+  {
+    id: 'blog-02',
+    title: {
+      th: 'สุขภาพผู้ชายวัย 30+: การเปลี่ยนแปลงทางชีวภาพและวิธีดูแลร่างกาย',
+      vi: 'Sức khỏe nam giới sau tuổi 30: Thay đổi sinh học và cách bảo vệ phong độ'
+    },
+    category: {
+      th: 'สุขภาพเพศชาย',
+      vi: 'Sức khỏe Nam giới'
+    },
+    summary: {
+      th: 'เมื่อก้าวเข้าสู่วัย 30 ปี ร่างกายของผู้ชายจะเริ่มลดฮอร์โมนเพศชายและมวลกล้ามเนื้อลงอย่างเงียบๆ ทำอย่างไรให้ยังคงฟิตและมีพลังงานเต็มเปี่ยม?',
+      vi: 'Bước qua tuổi 30, cơ thể nam giới bắt đầu sụt giảm Testosterone và cơ bắp một cách thầm lặng. Làm thế nào để duy trì sự bền bỉ và nguồn năng lượng dồi dào?'
+    },
+    date: '12/05/2026',
+    readTime: {
+      th: 'อ่าน 7 นาที',
+      vi: 'Đọc 7 phút'
+    },
+    author: {
+      th: 'นพ. เกียรติภูมิ (เวชศาสตร์ชะลอวัย)',
+      vi: 'Bác sĩ Kiệt Phong (Chuyên gia Nam khoa)'
+    },
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800',
+    content: {
+      th: `วัย 30 ปี มักถูกมองว่าเป็นวัยที่มั่นคงในหน้าที่การงาน อย่างไรก็ตามในแง่ของระบบชีวภาพ นี่คือจุดเปลี่ยนที่สำคัญเนื่องจากร่างกายจะเริ่มเผชิญกับระดับฮอร์โมนเทสโทสเตอโรน (Testosterone) ที่ค่อยๆ ลดลง
+
+### ความจริงเกี่ยวกับการลดลงของฮอร์โมนชายหลังอายุ 30 ปี
+หลังอายุ 30 ระดับฮอร์โมนเพศชายจะลดลงเฉลี่ย 1% ถึง 2% ทุก năm นำมาซึ่งอาการแฝง:
+- รู้สึกอ่อนเพลียและหมดพลังงานได้ง่ายระหว่าง ngày
+- อารมณ์แปรปรวน เครียดสะสม ขาดสมาธิในการทำงาน
+- อัตราการเผาผลาญลดลง สะสมไขมันหน้าท้องง่ายขึ้นมาก
+- สมรรถภาพและความต้องการลดลงอย่างสังเกตได้
+
+### เคล็ดลับการรักษาความฟิตของผู้ชายวัย 30+ ให้ยาวนาน
+
+#### 1. เน้นทานอาหารกลุ่มสังกะสี (Zinc)
+สังกะสี là แร่ธาตุหลักที่จำเป็นในกระบวนการผลิตฮอร์โมนชาย พบมากในหอยนางรม ถั่วต่างๆ เนื้อสัตว์ และไข่
+
+#### 2. ออกกำลังกายแบบแรงต้าน (Weight Training)
+เน้นท่าออกกำลังกายมัดกล้ามเนื้อใหญ่ เช่น Squats, Deadlifts เพื่อกระตุ้นระดับ Testosterone ตามธรรมชาติอย่างมีประสิทธิภาพสูงสุด
+
+#### 3. พักผ่อนและควบคุมระดับคอร์ติซอล (Cortisol)
+ความเครียดจะกระตุ้นฮอร์โมนทำลายกล้ามเนื้อ การนอนหลับลึก 7-8 ชั่วโมงคือกุญแจฟื้นฟูฮอร์โมนเพศชายที่ดีที่สุด`,
+      vi: `Tuổi 30 thường được coi là đỉnh cao sự nghiệp của phái mạnh. Tuy nhiên, dưới góc độ sinh học, đây là một cột mốc bước ngoặt khi cơ thể nam giới đối mặt với sự suy giảm lượng hormone nam giới Testosterone quan trọng.
+
+### Sự thật về sụt giảm Testosterone sau tuổi 30
+Sau 30 tuổi, nồng độ Testosterone tự nhiên giảm trung bình 1% đến 2% mỗi năm, dẫn đến các dấu hiệu thầm lặng:
+- Dễ mệt mỏi, uể oải giữa ngày làm việc dù không vận động nặng.
+- Tâm trạng dễ cáu gắt, giảm khả năng tập trung, stress kéo dài.
+- Tốc độ trao đổi chất giảm, mỡ bụng tích tụ nhanh chóng dù ăn uống như cũ.
+- Suy giảm sinh lực và phong độ phòng chăn gối.
+
+### Bí quyết giữ vững phong độ bền bỉ cho quý ông 30+
+
+#### 1. Ưu tiên thực phẩm giàu Kẽm (Zinc)
+Kẽm là khoáng chất cốt lõi thúc đẩy sản sinh Testosterone tự nhiên. Hãy bổ sung hàu biển, các loại hạt dinh dưỡng, thịt đỏ và trứng vào thực đơn.
+
+#### 2. Tập luyện kháng lực (Weight Training)
+Dành ít nhất 3 buổi/tuần tập tạ các nhóm cơ lớn (như Squat, Bench Press) để kích thích cơ thể giải phóng Testosterone tự nhiên tốt nhất.
+
+#### 3. Giảm căng thẳng và ngủ đủ giấc
+Căng thẳng sinh ra Cortisol phá hủy cơ bắp và ức chế hormone sinh lý nam. Giấc ngủ chất lượng từ 7-8 tiếng mỗi đêm là liều thuốc vàng khôi phục phong độ.`
+    },
+    relatedProducts: ['men-30-01']
+  }
+];
+
+// Translation dictionary for Thai and Vietnamese
+const TRANSLATIONS = {
+  th: {
+    // Header & Navigation
+    home: 'หน้าแรก',
+    catalog: 'สินค้าแนะนำ',
+    blog: 'บทความสุขภาพ',
+    about: 'เกี่ยวกับเรา',
+    disclaimer: 'นโยบายแอฟฟิลิเอต',
+    allProducts: 'ดูสินค้าทั้งหมด',
+    searchPlaceholder: 'ค้นหาสินค้า ส่วนประกอบ หรือเป้าหมายสุขภาพ...',
+    popularKeywords: 'คีย์เวิร์ดยอดนิยม',
+    
+    // Toast & Alerts
+    affiliateDisclosure: 'คำชี้แจง: เว็บไซต์นี้ใช้ลิงก์แนะนำ (Affiliate Links) เราอาจได้รับค่าคอมมิชชั่นเล็กน้อยเมื่อท่านสั่งซื้อโดยไม่มีค่าใช้จ่ายเพิ่มใดๆ',
+    viewPolicy: 'อ่านรายละเอียดนโยบาย',
+    linkClicked: 'ระบบกำลังนำทางคุณไปยังลิงก์ร้านค้าทางการเพื่อความปลอดภัย',
+    
+    // Home Page
+    heroSubtitle: 'คู่มือการเลือกอาหารเสริมและข้อมูลการดูแลตัวเองเชิงลึก',
+    heroTitle1: 'สร้างวิถีชีวิตเพื่อสุขภาพ',
+    heroTitle2: 'ด้วยพลังขับเคลื่อนจากธรรมชาติ',
+    heroDesc: 'เราศึกษาข้อมูลทางวิชาการและวิจัยทางคลินิก เพื่อแนะนำผลิตภัณฑ์เสริมอาหารจากสารสกัดออร์แกนิกที่มีความปลอดภัย ตรงกับความต้องการเฉพาะบุคคล',
+    exploreByGoal: 'เลือกดูแลตามหมวดหมู่เป้าหมาย',
+    exploreByGoalDesc: 'ตอบโจทย์ความท้าทายด้านสุขภาพด้วยการแยกแยะสารบำรุงตามระบบอวัยวะอย่างชัดเจน',
+    recommendedProducts: 'สินค้าแนะนำที่เราคัดสรร',
+    recommendedProductsDesc: 'ตรวจสอบที่มา ความคุ้มค่า และการรับรองคุณภาพมาตรฐานระดับสากลแล้ว',
+    latestBlogs: 'บทความความรู้ล่าสุด',
+    latestBlogsDesc: 'วิเคราะห์ข้อมูลสุขภาพเชิงลึก เพื่อสร้างสุขภาพดีแบบองค์รวมในแบบที่เข้าใจง่าย',
+    readMore: 'อ่านบทความ',
+    priceRecommend: 'ราคาแนะนำ',
+    seeDetail: 'ดูรายละเอียด →',
+    
+    // Catalog
+    catalogTitle: 'เลือกผลิตภัณฑ์ดูแลสุขภาพตามหมวดหมู่',
+    catalogDesc: 'เราประเมินส่วนประกอบที่สำคัญจากสารสกัดพืชธรรมชาติระดับพรีเมียมเพื่อความปลอดภัยของคุณ',
+    noProductFound: 'ไม่พบสินค้าที่สอดคล้องกับคำค้นหาของคุณ',
+    noProductFoundDesc: 'กรุณาลองเปลี่ยนคำค้นหา หรือรีเซ็ตตัวกรองเพื่อเรียกดูรายการสินค้าใหม่ทั้งหมด',
+    
+    // Product Detail
+    backToCatalog: 'กลับไปยังหน้ารายการสินค้า',
+    certifiedAuthentic: 'ตรวจสอบของแท้ 100%:',
+    certifiedAuthenticDesc: 'ลิงก์ด้านล่างจะนำท่านไปยังร้านค้าทางการของแบรนด์บน Shopee/Lazada เพื่อความมั่นใจ ปลอดภัยสูงสุด',
+    reviewsCount: 'คะแนนรีวิวผู้ใช้จริง',
+    priceDisclaimer: '*ราคาอาจเปลี่ยนแปลงตามแคมเปญโปรโมชั่นของผู้จำหน่ายในแต่ละวัน',
+    affiliateActionDesc: '* เมื่อคลิกปุ่มด้านล่าง ระบบจะเชื่อมต่อไปยังแพลตฟอร์มพันธมิตรเพื่อความมั่นใจในการซื้อสินค้าของแท้จากบริษัทโดยตรง',
+    buyNowButton: 'ตรวจสอบราคาและสั่งซื้อของแท้ได้ที่นี่',
+    benefitsTitle: 'คุณประโยชน์หลัก',
+    ingredientsTitle: 'ส่วนประกอบสำคัญ',
+    suitableForTitle: 'เหมาะสำหรับผู้ที่มีภาวะดังนี้',
+    
+    // Blog Detail
+    backToBlogs: 'ย้อนกลับไปบล็อกสุขภาพทั้งหมด',
+    writtenBy: 'เขียนโดย',
+    publishedOn: 'เผยแพร่เมื่อ',
+    relatedProductsInBlog: 'ผลิตภัณฑ์ที่แนะนำในบทความนี้',
+    readReviewDetail: 'อ่านรีวิวและรายละเอียดสินค้า',
+    
+    // Footer
+    footerDesc: 'EcoHealth Thailand เป็นแหล่งรวบรวมข้อมูลโภชนาการและการใช้ชีวิตอย่างมีวิทยาศาสตร์รองรับ มั่นใจในการแนะนำร้านค้าอย่างเป็นทางการของแท้จากพันธมิตรคุณภาพในไทย',
+    footerMedicalWarning: '* ข้อควรระวัง: ผลิตภัณฑ์เสริมอาหารทั้งหมดไม่ใช่ยารักษาโรค และไม่สามารถนำมาใช้ทดแทนการรักษาจากสถานพยาบาลได้',
+    footerContactTitle: 'การติดต่อและช่วยเหลือ',
+    copyright: 'สงวนลิขสิทธิ์ตามกฎหมายทั้งหมด',
+    adminAccess: 'แผงควบคุมระบบ (Admin Dashboard)',
+    
+    // Categories
+    cat_all: 'ทั้งหมด',
+    cat_digestive: 'ระบบย่อยอาหาร',
+    cat_men30: 'ฟิตเนสชาย 30+',
+    cat_joints: 'กระดูกและข้อต่อ',
+    cat_sleep: 'นอนหลับ/ผ่อนคลาย',
+    cat_weight: 'ควบคุมสัดส่วน',
+    cat_liver: 'บำรุงตับไต'
+  },
+  vi: {
+    // Header & Navigation
+    home: 'Trang chủ',
+    catalog: 'Sản phẩm nổi bật',
+    blog: 'Blog sức khỏe',
+    about: 'Giới thiệu',
+    disclaimer: 'Chính sách Affiliate',
+    allProducts: 'Xem tất cả sản phẩm',
+    searchPlaceholder: 'Tìm kiếm sản phẩm, thành phần, hoặc nhu cầu sức khỏe...',
+    popularKeywords: 'Từ khóa phổ biến',
+    
+    // Toast & Alerts
+    affiliateDisclosure: 'Công bố: Website có chứa liên kết tiếp thị liên kết (Affiliate). Chúng tôi có thể nhận hoa hồng nhỏ khi bạn mua hàng mà không phát sinh thêm chi phí.',
+    viewPolicy: 'Xem chi tiết chính sách',
+    linkClicked: 'Hệ thống đang chuyển hướng bạn tới gian hàng chính hãng để đảm bảo an toàn.',
+    
+    // Home Page
+    heroSubtitle: 'Cẩm nang lựa chọn thực phẩm bổ sung & chăm sóc sức khỏe khoa học',
+    heroTitle1: 'Xây dựng lối sống lành mạnh',
+    heroTitle2: 'Từ nguồn năng lượng tự nhiên',
+    heroDesc: 'Chúng tôi nghiên cứu dữ liệu y khoa để gợi ý các sản phẩm bổ sung chiết xuất hữu cơ an toàn, chất lượng vượt trội, phù hợp tối đa với nhu cầu cá nhân của bạn.',
+    exploreByGoal: 'Chăm sóc sức khỏe theo mục tiêu',
+    exploreByGoalDesc: 'Giải quyết các vấn đề sức khỏe dễ dàng bằng việc phân chia dưỡng chất theo từng hệ cơ quan rõ ràng.',
+    recommendedProducts: 'Sản phẩm khuyên dùng hàng đầu',
+    recommendedProductsDesc: 'Sản phẩm đã được kiểm định kỹ lưỡng về nguồn gốc, giá trị dinh dưỡng và đạt chuẩn chất lượng quốc tế.',
+    latestBlogs: 'Bài viết chia sẻ kiến thức mới nhất',
+    latestBlogsDesc: 'Phân tích y học chuyên sâu giúp bạn thiết lập thói quen sống khỏe mỗi ngày một cách đơn giản, khoa học.',
+    readMore: 'Đọc tiếp',
+    priceRecommend: 'Giá khuyên dùng',
+    seeDetail: 'Xem chi tiết →',
+    
+    // Catalog
+    catalogTitle: 'Danh mục sản phẩm sức khỏe',
+    catalogDesc: 'Chúng tôi đánh giá nghiêm ngặt thành phần dưỡng chất của từng thương hiệu nhằm đem lại giải pháp an toàn nhất.',
+    noProductFound: 'Không tìm thấy sản phẩm nào khớp với từ khóa của bạn',
+    noProductFoundDesc: 'Vui lòng thay đổi từ khóa hoặc đặt lại bộ lọc danh mục để tìm kiếm lại tất cả sản phẩm.',
+    
+    // Product Detail
+    backToCatalog: 'Quay lại danh sách sản phẩm',
+    certifiedAuthentic: 'Cam kết chính hãng 100%:',
+    certifiedAuthenticDesc: 'Liên kết dưới đây dẫn thẳng tới gian hàng chính hãng trực tiếp của thương hiệu trên Shopee/Lazada, đảm bảo tuyệt đối an toàn.',
+    reviewsCount: 'lượt đánh giá thực tế từ khách hàng',
+    priceDisclaimer: '*Giá bán thực tế có thể thay đổi nhẹ tùy theo chương trình khuyến mãi của sàn TMĐT.',
+    affiliateActionDesc: '*Khi bạn click nút bên dưới, hệ thống sẽ chuyển hướng an toàn tới sàn đối tác để bạn nhận thêm mã giảm giá độc quyền từ hãng.',
+    buyNowButton: 'XEM CHI TIẾT & MUA HÀNG CHÍNH HÃNG TẠI ĐÂY',
+    benefitsTitle: 'Công dụng nổi bật',
+    ingredientsTitle: 'Thành phần hoạt chất chính',
+    suitableForTitle: 'Đối tượng khuyên dùng',
+    
+    // Blog Detail
+    backToBlogs: 'Quay lại danh sách bài viết',
+    writtenBy: 'Tác giả',
+    publishedOn: 'Ngày đăng',
+    relatedProductsInBlog: 'Sản phẩm khuyên dùng trong bài viết này',
+    readReviewDetail: 'Xem thông tin sản phẩm',
+    
+    // Footer
+    footerDesc: 'EcoHealth Thailand là chuyên trang chia sẻ kiến thức dinh dưỡng thực chứng và lối sống đô thị khoa học. Chúng tôi tự hào liên kết giới thiệu các sản phẩm chính hãng tốt nhất.',
+    footerMedicalWarning: '*Lưu ý: Các sản phẩm được giới thiệu trên website không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.',
+    footerContactTitle: 'Thông tin liên hệ & Hỗ trợ',
+    copyright: 'Bản quyền nội dung thuộc về EcoHealth. Đã đăng ký bảo hộ.',
+    adminAccess: 'Trang quản trị (Admin Dashboard)',
+    
+    // Categories
+    cat_all: 'Tất cả sản phẩm',
+    cat_digestive: 'Hỗ trợ Tiêu hóa',
+    cat_men30: 'Sinh lực Nam 30+',
+    cat_joints: 'Khớp xương linh hoạt',
+    cat_sleep: 'Ngủ ngon sâu giấc',
+    cat_weight: 'Kiểm soát cân nặng',
+    cat_liver: 'Bảo vệ Gan Thận'
+  }
+};
+
+const INITIAL_CLICKS = {
+  'digest-01': 142,
+  'men-30-01': 295,
+  'joint-01': 88,
+  'sleep-01': 187,
+  'weight-01': 113,
+  'liver-01': 95
+};
+
+export default function App() {
+  const [currentView, setCurrentView] = useState('user'); // user, admin
+  const [currentPage, setCurrentPage] = useState('home'); // home, blog, catalog, about, disclaimer, product-detail, blog-detail
+  
+  // App Language: 'th' for Thai customers, 'vi' for Vietnamese admin / viewer toggle
+  const [lang, setLang] = useState('th'); 
+  
+  // Base states for products and blog posts
+  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [blogPosts, setBlogPosts] = useState(INITIAL_BLOG_POSTS);
+  
+  // Tracker states (Clicks & Simulated Revenue in Thai Baht)
+  const [clicksTracker, setClicksTracker] = useState(INITIAL_CLICKS);
+  const [simulatedRevenue, setSimulatedRevenue] = useState(54200);
+
+  // Filter & Search states
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedBlogId, setSelectedBlogId] = useState(null);
+  const [catalogFilter, setCatalogFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Admin states
+  const [activeAdminTab, setActiveAdminTab] = useState('overview');
+  const [notification, setNotification] = useState(null);
+
+  const handleImageUpload = (e, callback) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        triggerNotification('Kích thước ảnh quá lớn! Vui lòng chọn ảnh dưới 2MB để tối ưu dung lượng.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result);
+        triggerNotification('Tải ảnh lên thành công!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Bilingual Product Form states
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null); 
+  const [productForm, setProductForm] = useState({
+    nameTh: '', nameVi: '',
+    category: 'digestive', price: '', 
+    shortDescTh: '', shortDescVi: '',
+    image: '',
+    benefitsTh: '', benefitsVi: '',
+    ingredientsTh: '', ingredientsVi: '',
+    suitableForTh: '', suitableForVi: '',
+    affiliateUrl: ''
+  });
+
+  // Bilingual Blog Form states
+  const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
+  const [editingBlog, setEditingBlog] = useState(null);
+  const [blogForm, setBlogForm] = useState({
+    titleTh: '', titleVi: '',
+    categoryTh: '', categoryVi: '',
+    summaryTh: '', summaryVi: '',
+    authorTh: '', authorVi: '',
+    readTimeTh: '', readTimeVi: '',
+    image: '',
+    contentTh: '', contentVi: '',
+    relatedProducts: ''
+  });
+
+  // Helper translation fetcher
+  const t = (key) => {
+    return TRANSLATIONS[lang][key] || TRANSLATIONS['th'][key] || key;
+  };
+
+  const getL = (multilingualField) => {
+    if (!multilingualField) return '';
+    return multilingualField[lang] || multilingualField['th'] || '';
+  };
+
+  const triggerNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 4000);
+  };
+
+  const navigateTo = (page, id = null, filter = 'all') => {
+    setCurrentPage(page);
+    if (page === 'product-detail') setSelectedProductId(id);
+    if (page === 'blog-detail') setSelectedBlogId(id);
+    if (page === 'catalog') setCatalogFilter(filter);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAffiliateClick = (productId, productName) => {
+    setClicksTracker(prev => ({
+      ...prev,
+      [productId]: (prev[productId] || 0) + 1
+    }));
+    setSimulatedRevenue(prev => prev + 50);
+    
+    const notificationMsg = lang === 'th' 
+      ? `กําลังนําทางไปยังแบรนด์ของแท้สำหรับ: ${productName}` 
+      : `Đang chuyển hướng bạn đến gian hàng chính hãng của: ${productName}`;
+      
+    triggerNotification(notificationMsg, 'success');
+  };
+
+  // Memoized lookups
+  const currentProduct = useMemo(() => {
+    return products.find(p => p.id === selectedProductId) || products[0];
+  }, [selectedProductId, products]);
+
+  const currentBlog = useMemo(() => {
+    return blogPosts.find(b => b.id === selectedBlogId) || blogPosts[0];
+  }, [selectedBlogId, blogPosts]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => {
+      const matchesCategory = catalogFilter === 'all' || p.category === catalogFilter;
+      const searchLower = searchQuery.toLowerCase();
+      
+      const nameThMatch = (p.name.th || '').toLowerCase().includes(searchLower);
+      const nameViMatch = (p.name.vi || '').toLowerCase().includes(searchLower);
+      const descThMatch = (p.shortDesc.th || '').toLowerCase().includes(searchLower);
+      const descViMatch = (p.shortDesc.vi || '').toLowerCase().includes(searchLower);
+
+      return matchesCategory && (nameThMatch || nameViMatch || descThMatch || descViMatch);
+    });
+  }, [catalogFilter, searchQuery, products]);
+
+  const openProductModal = (product = null) => {
+    if (product) {
+      setEditingProduct(product);
+      setProductForm({
+        nameTh: product.name.th || '',
+        nameVi: product.name.vi || '',
+        category: product.category,
+        price: product.price,
+        shortDescTh: product.shortDesc.th || '',
+        shortDescVi: product.shortDesc.vi || '',
+        image: product.image,
+        benefitsTh: (product.benefits.th || []).join('\n'),
+        benefitsVi: (product.benefits.vi || []).join('\n'),
+        ingredientsTh: (product.ingredients.th || []).join('\n'),
+        ingredientsVi: (product.ingredients.vi || []).join('\n'),
+        suitableForTh: (product.suitableFor.th || []).join('\n'),
+        suitableForVi: (product.suitableFor.vi || []).join('\n'),
+        affiliateUrl: product.affiliateUrl
+      });
+    } else {
+      setEditingProduct(null);
+      setProductForm({
+        nameTh: '', nameVi: '',
+        category: 'digestive', price: '', 
+        shortDescTh: '', shortDescVi: '',
+        image: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&q=80&w=600',
+        benefitsTh: '', benefitsVi: '',
+        ingredientsTh: '', ingredientsVi: '',
+        suitableForTh: '', suitableForVi: '',
+        affiliateUrl: 'https://shopee.co.th'
+      });
+    }
+    setIsProductModalOpen(true);
+  };
+
+  const saveProduct = (e) => {
+    e.preventDefault();
+    if (!productForm.nameTh || !productForm.nameVi || !productForm.price) {
+      triggerNotification('Vui lòng nhập đầy đủ tên sản phẩm (Thái & Việt) và giá bán!', 'error');
+      return;
+    }
+
+    const categoryLabels = {
+      'digestive': { th: 'ระบบย่อยอาหารและลำไส้', vi: 'Hệ tiêu hóa & Đường ruột' },
+      'men30': { th: 'ผู้ชายวัย 30+', vi: 'Sức khỏe nam giới 30+' },
+      'joints': { th: 'สุขภาพข้อต่อและกระดูก', vi: 'Xương khớp & Khớp động' },
+      'sleep': { th: 'การนอนหลับและผ่อนคลาย', vi: 'Giấc ngủ & Thư giãn thần kinh' },
+      'weight': { th: 'การควบคุมน้ำหนักและสัดส่วน', vi: 'Kiểm soát cân nặng & Vóc dáng' },
+      'liver': { th: 'การดีท็อกซ์ตับและไต', vi: 'Thải độc gan & Thận' }
+    };
+
+    const formattedProduct = {
+      id: editingProduct ? editingProduct.id : `prod-${Date.now()}`,
+      name: { th: productForm.nameTh, vi: productForm.nameVi },
+      category: productForm.category,
+      categoryLabel: categoryLabels[productForm.category] || { th: 'สุขภาพทั่วไป', vi: 'Sức khỏe tổng quát' },
+      shortDesc: { th: productForm.shortDescTh, vi: productForm.shortDescVi },
+      price: productForm.price,
+      rating: editingProduct ? editingProduct.rating : 5.0,
+      reviews: editingProduct ? editingProduct.reviews : 1,
+      image: productForm.image,
+      benefits: {
+        th: productForm.benefitsTh.split('\n').filter(x => x.trim()),
+        vi: productForm.benefitsVi.split('\n').filter(x => x.trim())
+      },
+      ingredients: {
+        th: productForm.ingredientsTh.split('\n').filter(x => x.trim()),
+        vi: productForm.ingredientsVi.split('\n').filter(x => x.trim())
+      },
+      suitableFor: {
+        th: productForm.suitableForTh.split('\n').filter(x => x.trim()),
+        vi: productForm.suitableForVi.split('\n').filter(x => x.trim())
+      },
+      affiliateUrl: productForm.affiliateUrl
+    };
+
+    if (editingProduct) {
+      setProducts(prev => prev.map(p => p.id === editingProduct.id ? formattedProduct : p));
+      triggerNotification(`Cập nhật thành công sản phẩm: ${productForm.nameVi}`);
+    } else {
+      setProducts(prev => [formattedProduct, ...prev]);
+      setClicksTracker(prev => ({ ...prev, [formattedProduct.id]: 0 }));
+      triggerNotification(`Thêm mới thành công sản phẩm: ${productForm.nameVi}`);
+    }
+    setIsProductModalOpen(false);
+  };
+
+  const deleteProduct = (id, nameVi) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
+    triggerNotification(`Đã xóa sản phẩm "${nameVi}" khỏi hệ thống.`, 'error');
+  };
+
+  const openBlogModal = (blog = null) => {
+    if (blog) {
+      setEditingBlog(blog);
+      setBlogForm({
+        titleTh: blog.title.th || '',
+        titleVi: blog.title.vi || '',
+        categoryTh: blog.category.th || '',
+        categoryVi: blog.category.vi || '',
+        summaryTh: blog.summary.th || '',
+        summaryVi: blog.summary.vi || '',
+        authorTh: blog.author.th || '',
+        authorVi: blog.author.vi || '',
+        readTimeTh: blog.readTime.th || '',
+        readTimeVi: blog.readTime.vi || '',
+        image: blog.image,
+        contentTh: blog.content.th || '',
+        contentVi: blog.content.vi || '',
+        relatedProducts: blog.relatedProducts ? blog.relatedProducts.join(', ') : ''
+      });
+    } else {
+      setEditingBlog(null);
+      setBlogForm({
+        titleTh: '', titleVi: '',
+        categoryTh: 'สุขภาพ', categoryVi: 'Sức khỏe',
+        summaryTh: '', summaryVi: '',
+        authorTh: 'ทีมที่ปรึกษา EcoHealth', authorVi: 'Ban cố vấn EcoHealth',
+        readTimeTh: 'อ่าน 5 นาที', readTimeVi: 'Đọc 5 phút',
+        image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800',
+        contentTh: '', contentVi: '',
+        relatedProducts: ''
+      });
+    }
+    setIsBlogModalOpen(true);
+  };
+
+  const saveBlog = (e) => {
+    e.preventDefault();
+    if (!blogForm.titleTh || !blogForm.titleVi || !blogForm.contentTh || !blogForm.contentVi) {
+      triggerNotification('Vui lòng hoàn thiện tiêu đề & nội dung cả hai ngôn ngữ Thái và Việt!', 'error');
+      return;
+    }
+
+    const formattedBlog = {
+      id: editingBlog ? editingBlog.id : `blog-${Date.now()}`,
+      title: { th: blogForm.titleTh, vi: blogForm.titleVi },
+      category: { th: blogForm.categoryTh, vi: blogForm.categoryVi },
+      summary: { th: blogForm.summaryTh, vi: blogForm.summaryVi },
+      author: { th: blogForm.authorTh, vi: blogForm.authorVi },
+      readTime: { th: blogForm.readTimeTh, vi: blogForm.readTimeVi },
+      image: blogForm.image,
+      date: editingBlog ? editingBlog.date : `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`,
+      content: { th: blogForm.contentTh, vi: blogForm.contentVi },
+      relatedProducts: blogForm.relatedProducts.split(',').map(x => x.trim()).filter(Boolean)
+    };
+
+    if (editingBlog) {
+      setBlogPosts(prev => prev.map(b => b.id === editingBlog.id ? formattedBlog : b));
+      triggerNotification(`Đã sửa bài viết: ${blogForm.titleVi}`);
+    } else {
+      setBlogPosts(prev => [formattedBlog, ...prev]);
+      triggerNotification(`Đã xuất bản bài viết mới: ${blogForm.titleVi}`);
+    }
+    setIsBlogModalOpen(false);
+  };
+
+  const deleteBlog = (id, titleVi) => {
+    setBlogPosts(prev => prev.filter(b => b.id !== id));
+    triggerNotification(`Đã xóa bài viết "${titleVi}" khỏi hệ thống.`, 'error');
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans antialiased">
+      
+      {/* Toast Notification HUD */}
+      {notification && (
+        <div className={`fixed bottom-5 right-5 z-50 flex items-center space-x-3 px-5 py-4 rounded-2xl shadow-xl border animate-bounce transition-all ${
+          notification.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+        }`}>
+          {notification.type === 'error' ? <AlertCircle className="w-5 h-5 flex-shrink-0" /> : <CheckCircle className="w-5 h-5 flex-shrink-0" />}
+          <span className="text-sm font-bold">{notification.message}</span>
+        </div>
+      )}
+
+      {/* Admin Panel Toggle Flag Banner */}
+      <div className="bg-slate-900 text-white py-2 px-4 shadow-md border-b border-slate-800 flex justify-between items-center text-xs">
+        <div className="flex items-center space-x-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="font-semibold text-slate-300">
+            {currentView === 'user' 
+              ? `Chế độ Khách hàng: ${lang === 'th' ? 'Thị trường Thái Lan 🇹🇭' : 'Bản dịch Tiếng Việt 🇻🇳'}` 
+              : 'Giao diện Quản trị viên (Vietnamese Admin Panel) 🛠️'}
+          </span>
+        </div>
+        <button
+          onClick={() => {
+            if (currentView === 'user') {
+              setCurrentView('admin');
+              triggerNotification('Đã đăng nhập vào trang quản trị EcoHealth!');
+            } else {
+              setCurrentView('user');
+              navigateTo('home');
+              triggerNotification('Quay lại giao diện bán hàng mẫu');
+            }
+          }}
+          className={`px-3 py-1 rounded-full font-bold flex items-center space-x-1.5 transition-all uppercase tracking-wider ${
+            currentView === 'user' 
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+          }`}
+        >
+          <Settings className="w-3.5 h-3.5" />
+          <span>{currentView === 'user' ? 'Trang Admin (Dành cho Bạn)' : 'Quay lại cửa hàng'}</span>
+        </button>
+      </div>
+
+      {/* USER STOREFRONT HEADER */}
+      {currentView === 'user' && (
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-20">
+              
+              {/* Logo */}
+              <div 
+                className="flex items-center space-x-2 cursor-pointer group" 
+                onClick={() => navigateTo('home')}
+              >
+                <div className="bg-emerald-600 text-white p-2.5 rounded-2xl shadow-md group-hover:bg-emerald-700 transition-all duration-300">
+                  <Heart className="w-6 h-6 animate-pulse" />
+                </div>
+                <div>
+                  <span className="text-xl font-bold text-slate-900 tracking-tight block">Eco<span className="text-emerald-600">Health</span></span>
+                  <span className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase block">
+                    {lang === 'th' ? 'สุขภาพดีเริ่มที่ธรรมชาติ' : 'Sống khỏe thuận tự nhiên'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex items-center space-x-8">
+                <button 
+                  onClick={() => navigateTo('home')} 
+                  className={`font-semibold text-sm transition-colors duration-200 ${currentPage === 'home' ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'}`}
+                >
+                  {t('home')}
+                </button>
+                <button 
+                  onClick={() => navigateTo('catalog')} 
+                  className={`font-semibold text-sm transition-colors duration-200 ${currentPage === 'catalog' ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'}`}
+                >
+                  {t('catalog')}
+                </button>
+                <button 
+                  onClick={() => navigateTo('blog')} 
+                  className={`font-semibold text-sm transition-colors duration-200 ${currentPage === 'blog' || currentPage === 'blog-detail' ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'}`}
+                >
+                  {t('blog')}
+                </button>
+                <button 
+                  onClick={() => navigateTo('about')} 
+                  className={`font-semibold text-sm transition-colors duration-200 ${currentPage === 'about' ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'}`}
+                >
+                  {t('about')}
+                </button>
+                <button 
+                  onClick={() => navigateTo('disclaimer')} 
+                  className={`font-semibold text-sm transition-colors duration-200 ${currentPage === 'disclaimer' ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'}`}
+                >
+                  {t('disclaimer')}
+                </button>
+              </nav>
+
+              {/* Languages Switcher & CTA */}
+              <div className="hidden md:flex items-center space-x-4">
+                
+                {/* Language Switcher Pill */}
+                <div className="bg-slate-100 p-1 rounded-xl flex items-center space-x-1 border border-slate-200">
+                  <button
+                    onClick={() => { setLang('th'); triggerNotification('Đã đổi ngôn ngữ xem sang Tiếng Thái'); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 transition-all ${
+                      lang === 'th' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <span>🇹🇭</span>
+                    <span>TH</span>
+                  </button>
+                  <button
+                    onClick={() => { setLang('vi'); triggerNotification('Đã đổi ngôn ngữ xem sang Tiếng Việt'); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 transition-all ${
+                      lang === 'vi' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <span>🇻🇳</span>
+                    <span>VI</span>
+                  </button>
+                </div>
+
+                <button 
+                  onClick={() => navigateTo('catalog')} 
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-300 flex items-center space-x-1.5"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>{t('allProducts')}</span>
+                </button>
+              </div>
+
+              {/* Mobile Menu & Language Toggle button */}
+              <div className="flex items-center space-x-2 md:hidden">
+                <button
+                  onClick={() => { setLang(lang === 'th' ? 'vi' : 'th'); triggerNotification(`Đã chuyển sang ${lang === 'th' ? 'Tiếng Việt 🇻🇳' : 'Tiếng Thái 🇹🇭'}`); }}
+                  className="text-slate-700 p-2 bg-slate-100 rounded-lg text-xs font-bold"
+                >
+                  {lang === 'th' ? '🇹🇭 TH' : '🇻🇳 VI'}
+                </button>
+                <button 
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+                  className="text-slate-700 hover:text-emerald-600 p-2 focus:outline-none"
+                >
+                  {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Dropdown Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden bg-white border-t border-slate-200 px-4 py-4 space-y-3 shadow-inner">
+              <button 
+                onClick={() => navigateTo('home')} 
+                className={`block w-full text-left px-4 py-2 rounded-lg font-semibold text-sm ${currentPage === 'home' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'}`}
+              >
+                {t('home')}
+              </button>
+              <button 
+                onClick={() => navigateTo('catalog')} 
+                className={`block w-full text-left px-4 py-2 rounded-lg font-semibold text-sm ${currentPage === 'catalog' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'}`}
+              >
+                {t('catalog')}
+              </button>
+              <button 
+                onClick={() => navigateTo('blog')} 
+                className={`block w-full text-left px-4 py-2 rounded-lg font-semibold text-sm ${currentPage === 'blog' || currentPage === 'blog-detail' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'}`}
+              >
+                {t('blog')}
+              </button>
+              <button 
+                onClick={() => navigateTo('about')} 
+                className={`block w-full text-left px-4 py-2 rounded-lg font-semibold text-sm ${currentPage === 'about' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'}`}
+              >
+                {t('about')}
+              </button>
+              <button 
+                onClick={() => navigateTo('disclaimer')} 
+                className={`block w-full text-left px-4 py-2 rounded-lg font-semibold text-sm ${currentPage === 'disclaimer' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'}`}
+              >
+                {t('disclaimer')}
+              </button>
+            </div>
+          )}
+        </header>
+      )}
+
+      {/* Affiliate Transparency Banner at top */}
+      {currentView === 'user' && (
+        <div className="bg-amber-50 border-b border-amber-200 py-3 px-4 text-center">
+          <div className="max-w-7xl mx-auto flex items-center justify-center space-x-2 text-xs sm:text-sm text-amber-800">
+            <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <span>
+              <strong>{t('affiliateDisclosure')}</strong>{' '}
+              <button 
+                onClick={() => navigateTo('disclaimer')} 
+                className="underline font-semibold hover:text-amber-950 transition-colors"
+              >
+                {t('viewPolicy')}
+              </button>
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <main className="flex-grow">
+
+        {/* ==================== USER VIEW ==================== */}
+        {currentView === 'user' && (
+          <>
+            {/* Home Page */}
+            {currentPage === 'home' && (
+              <div>
+                {/* Hero Banner Section */}
+                <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 text-white py-16 lg:py-24">
+                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#34d399_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid lg:grid-cols-12 gap-12 items-center">
+                      <div className="lg:col-span-7 space-y-6">
+                        <span className="inline-flex items-center space-x-1 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-semibold uppercase tracking-wider">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>{t('heroSubtitle')}</span>
+                        </span>
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                          {t('heroTitle1')} <br />
+                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+                            {t('heroTitle2')}
+                          </span>
+                        </h1>
+                        <p className="text-slate-300 text-lg sm:text-xl max-w-2xl font-light">
+                          {t('heroDesc')}
+                        </p>
+                        
+                        {/* Instant Search Bar */}
+                        <div className="bg-white/10 p-2 rounded-2xl border border-white/20 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 max-w-lg">
+                          <div className="relative w-full">
+                            <Search className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                            <input 
+                              type="text" 
+                              placeholder={t('searchPlaceholder')} 
+                              className="w-full pl-11 pr-4 py-3 bg-transparent text-white placeholder-slate-400 focus:outline-none focus:ring-0 text-sm"
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  navigateTo('catalog');
+                                }
+                              }}
+                            />
+                          </div>
+                          <button 
+                            onClick={() => navigateTo('catalog')}
+                            className="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl text-sm transition-all duration-300 shadow-md flex items-center justify-center space-x-1.5"
+                          >
+                            <span>Search</span>
+                          </button>
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 pt-2 text-xs text-slate-400">
+                          <span>{t('popularKeywords')}:</span>
+                          <button onClick={() => navigateTo('catalog', null, 'digestive')} className="hover:text-emerald-300 transition-colors">#digestive</button>
+                          <button onClick={() => navigateTo('catalog', null, 'men30')} className="hover:text-emerald-300 transition-colors">#men30+</button>
+                          <button onClick={() => navigateTo('catalog', null, 'joints')} className="hover:text-emerald-300 transition-colors">#joints</button>
+                        </div>
+                      </div>
+
+                      <div className="lg:col-span-5 relative">
+                        <div className="absolute -inset-1 rounded-full bg-emerald-500/25 blur-xl"></div>
+                        <img 
+                          src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800" 
+                          alt="Health lifestyle" 
+                          className="relative rounded-3xl shadow-2xl border border-white/10 w-full object-cover aspect-[4/3] sm:aspect-video lg:aspect-square"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Categories Goal Grid */}
+                <section className="py-16 bg-white">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center max-w-3xl mx-auto mb-12">
+                      <h2 className="text-3xl font-bold text-slate-950 tracking-tight">{t('exploreByGoal')}</h2>
+                      <p className="mt-2 text-slate-500">{t('exploreByGoalDesc')}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                      {[
+                        { key: 'digestive', label: t('cat_digestive'), icon: '🍃', color: 'from-green-50 to-emerald-50 text-emerald-700 hover:border-emerald-500' },
+                        { key: 'men30', label: t('cat_men30'), icon: '🦁', color: 'from-blue-50 to-indigo-50 text-indigo-700 hover:border-indigo-500' },
+                        { key: 'joints', label: t('cat_joints'), icon: '🦴', color: 'from-amber-50 to-orange-50 text-orange-700 hover:border-orange-500' },
+                        { key: 'sleep', label: t('cat_sleep'), icon: '🌙', color: 'from-purple-50 to-indigo-50 text-indigo-900 hover:border-indigo-800' },
+                        { key: 'weight', label: t('cat_weight'), icon: '🧘‍♀️', color: 'from-rose-50 to-pink-50 text-rose-700 hover:border-rose-500' },
+                        { key: 'liver', label: t('cat_liver'), icon: '🧪', color: 'from-teal-50 to-cyan-50 text-teal-700 hover:border-teal-500' }
+                      ].map((cat) => (
+                        <div 
+                          key={cat.key}
+                          onClick={() => navigateTo('catalog', null, cat.key)}
+                          className={`cursor-pointer p-6 rounded-2xl bg-gradient-to-b ${cat.color} border border-slate-200/60 shadow-sm text-center hover:scale-105 transition-all duration-300 hover:shadow-md`}
+                        >
+                          <span className="text-4xl block mb-3">{cat.icon}</span>
+                          <h3 className="font-bold text-sm tracking-tight">{cat.label}</h3>
+                          <span className="text-xs text-slate-400 mt-1 block">Detail →</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                {/* Recommended Products */}
+                <section className="py-16 bg-slate-50 border-t border-slate-200/50">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                      <div>
+                        <h2 className="text-3xl font-bold text-slate-950 tracking-tight">{t('recommendedProducts')}</h2>
+                        <p className="mt-2 text-slate-500">{t('recommendedProductsDesc')}</p>
+                      </div>
+                      <button 
+                        onClick={() => navigateTo('catalog')}
+                        className="mt-4 md:mt-0 flex items-center space-x-1 text-emerald-600 hover:text-emerald-700 font-semibold text-sm group"
+                      >
+                        <span>{t('allProducts')}</span>
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                      {products.slice(0, 3).map((prod) => (
+                        <div 
+                          key={prod.id} 
+                          className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full"
+                        >
+                          <div className="relative pt-[65%] overflow-hidden bg-slate-100">
+                            <img 
+                              src={prod.image} 
+                              alt={getL(prod.name)} 
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                              {getL(prod.categoryLabel)}
+                            </span>
+                          </div>
+                          <div className="p-6 flex flex-col flex-grow">
+                            <div className="flex items-center space-x-1 text-amber-500 text-sm mb-2">
+                              <Star className="w-4 h-4 fill-amber-500" />
+                              <span className="font-bold">{prod.rating}</span>
+                              <span className="text-slate-400">({prod.reviews})</span>
+                            </div>
+                            <h3 
+                              onClick={() => navigateTo('product-detail', prod.id)}
+                              className="font-bold text-xl text-slate-900 hover:text-emerald-600 cursor-pointer transition-colors"
+                            >
+                              {getL(prod.name)}
+                            </h3>
+                            <p className="text-sm text-slate-500 mt-2 line-clamp-2 flex-grow">{getL(prod.shortDesc)}</p>
+                            
+                            <div className="border-t border-slate-100 mt-4 pt-4 flex items-center justify-between">
+                              <div>
+                                <span className="text-xs text-slate-400 block">{t('priceRecommend')}</span>
+                                <span className="text-lg font-bold text-slate-950">{prod.price} ฿</span>
+                              </div>
+                              <button 
+                                onClick={() => navigateTo('product-detail', prod.id)}
+                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                              >
+                                {t('seeDetail')}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                {/* Latest Blogs */}
+                <section className="py-16 bg-white border-t border-slate-200/50">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                      <div>
+                        <h2 className="text-3xl font-bold text-slate-950 tracking-tight">{t('latestBlogs')}</h2>
+                        <p className="mt-2 text-slate-500">{t('latestBlogsDesc')}</p>
+                      </div>
+                      <button 
+                        onClick={() => navigateTo('blog')}
+                        className="mt-4 md:mt-0 flex items-center space-x-1 text-emerald-600 hover:text-emerald-700 font-semibold text-sm group"
+                      >
+                        <span>{t('blog')}</span>
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                      {blogPosts.slice(0, 3).map((post) => (
+                        <div 
+                          key={post.id} 
+                          className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full"
+                        >
+                          <div className="relative pt-[55%] overflow-hidden bg-slate-100">
+                            <img 
+                              src={post.image} 
+                              alt={getL(post.title)} 
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <span className="absolute bottom-4 left-4 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+                              {getL(post.category)}
+                            </span>
+                          </div>
+                          <div className="p-6 flex flex-col flex-grow">
+                            <div className="flex items-center space-x-4 text-xs text-slate-400 mb-3">
+                              <span className="flex items-center"><User className="w-3.5 h-3.5 mr-1" />{getL(post.author)}</span>
+                              <span className="flex items-center"><Clock className="w-3.5 h-3.5 mr-1" />{getL(post.readTime)}</span>
+                            </div>
+                            <h3 
+                              onClick={() => navigateTo('blog-detail', post.id)}
+                              className="font-bold text-lg text-slate-900 hover:text-emerald-600 cursor-pointer transition-colors line-clamp-2"
+                            >
+                              {getL(post.title)}
+                            </h3>
+                            <p className="text-sm text-slate-500 mt-2 line-clamp-3 flex-grow">{getL(post.summary)}</p>
+                            
+                            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                              <span className="text-xs text-slate-400">{post.date}</span>
+                              <button 
+                                onClick={() => navigateTo('blog-detail', post.id)}
+                                className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center"
+                              >
+                                {t('readMore')} <ChevronRight className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* Catalog Page */}
+            {currentPage === 'catalog' && (
+              <div className="py-12 bg-slate-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="mb-10 text-center max-w-2xl mx-auto">
+                    <span className="text-xs font-bold text-emerald-600 tracking-wider uppercase block mb-1">EcoHealth Catalog</span>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">{t('catalogTitle')}</h1>
+                    <p className="mt-2 text-slate-500">{t('catalogDesc')}</p>
+                  </div>
+
+                  {/* Search and Tabs filters */}
+                  <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-10 space-y-4">
+                    <div className="relative">
+                      <Search className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                      <input 
+                        type="text" 
+                        placeholder={t('searchPlaceholder')} 
+                        className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+                      {[
+                        { key: 'all', label: t('cat_all') },
+                        { key: 'digestive', label: t('cat_digestive') },
+                        { key: 'men30', label: t('cat_men30') },
+                        { key: 'joints', label: t('cat_joints') },
+                        { key: 'sleep', label: t('cat_sleep') },
+                        { key: 'weight', label: t('cat_weight') },
+                        { key: 'liver', label: t('cat_liver') }
+                      ].map((tab) => (
+                        <button
+                          key={tab.key}
+                          onClick={() => setCatalogFilter(tab.key)}
+                          className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${catalogFilter === tab.key ? 'bg-emerald-600 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {filteredProducts.length > 0 ? (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {filteredProducts.map((prod) => (
+                        <div 
+                          key={prod.id} 
+                          className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+                        >
+                          <div className="relative pt-[65%] overflow-hidden bg-slate-50">
+                            <img 
+                              src={prod.image} 
+                              alt={getL(prod.name)} 
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                              {getL(prod.categoryLabel)}
+                            </span>
+                          </div>
+                          <div className="p-6 flex flex-col flex-grow">
+                            <div className="flex items-center space-x-1 text-amber-500 text-sm mb-2">
+                              <Star className="w-4 h-4 fill-amber-500" />
+                              <span className="font-bold">{prod.rating}</span>
+                              <span className="text-slate-400">({prod.reviews})</span>
+                            </div>
+                            <h2 
+                              onClick={() => navigateTo('product-detail', prod.id)}
+                              className="font-bold text-xl text-slate-900 hover:text-emerald-600 cursor-pointer transition-colors"
+                            >
+                              {getL(prod.name)}
+                            </h2>
+                            <p className="text-sm text-slate-500 mt-2 line-clamp-3 flex-grow">{getL(prod.shortDesc)}</p>
+                            
+                            <div className="border-t border-slate-100 mt-5 pt-4 flex items-center justify-between">
+                              <div>
+                                <span className="text-xs text-slate-400 block">{t('priceRecommend')}</span>
+                                <span className="text-lg font-bold text-emerald-700">{prod.price} ฿</span>
+                              </div>
+                              <button 
+                                onClick={() => navigateTo('product-detail', prod.id)}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg"
+                              >
+                                {t('seeDetail')}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/60 shadow-sm">
+                      <AlertCircle className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                      <p className="text-lg font-semibold text-slate-900">{t('noProductFound')}</p>
+                      <p className="text-slate-500 text-sm mt-1">{t('noProductFoundDesc')}</p>
+                      <button 
+                        onClick={() => { setCatalogFilter('all'); setSearchQuery(''); }}
+                        className="mt-4 px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700"
+                      >
+                        Reset Filter
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Product Details Page */}
+            {currentPage === 'product-detail' && (
+              <div className="py-12 bg-slate-50">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <button 
+                    onClick={() => navigateTo('catalog')}
+                    className="inline-flex items-center space-x-1.5 text-slate-600 hover:text-emerald-600 font-semibold text-sm mb-6 transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>{t('backToCatalog')}</span>
+                  </button>
+
+                  <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-lg">
+                    <div className="grid md:grid-cols-2 gap-10 p-6 sm:p-10">
+                      <div className="space-y-6">
+                        <div className="relative pt-[80%] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100">
+                          <img 
+                            src={currentProduct.image} 
+                            alt={getL(currentProduct.name)} 
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60 flex items-center space-x-3.5">
+                          <ShieldAlert className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                          <p className="text-xs text-slate-600 leading-relaxed">
+                            <strong>{t('certifiedAuthentic')}</strong> {t('certifiedAuthenticDesc')}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-6 flex flex-col justify-between">
+                        <div>
+                          <span className="inline-block bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+                            {getL(currentProduct.categoryLabel)}
+                          </span>
+                          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">{getL(currentProduct.name)}</h1>
+                          
+                          <div className="flex items-center space-x-2 mt-2 text-slate-500">
+                            <div className="flex text-amber-500">
+                              <Star className="w-4 h-4 fill-amber-500" />
+                              <Star className="w-4 h-4 fill-amber-500" />
+                              <Star className="w-4 h-4 fill-amber-500" />
+                              <Star className="w-4 h-4 fill-amber-500" />
+                              <Star className="w-4 h-4 fill-amber-500" />
+                            </div>
+                            <span className="text-sm font-semibold text-slate-800">{currentProduct.rating} / 5</span>
+                            <span className="text-xs text-slate-400">({currentProduct.reviews} {t('reviewsCount')})</span>
+                          </div>
+
+                          <div className="mt-4 p-4 bg-emerald-50/55 rounded-xl border border-emerald-100/80">
+                            <span className="text-xs text-slate-500 block">{t('priceRecommend')}</span>
+                            <span className="text-2xl font-black text-emerald-700">{currentProduct.price} ฿</span>
+                            <span className="text-xs text-slate-400 block mt-0.5">{t('priceDisclaimer')}</span>
+                          </div>
+
+                          <p className="text-slate-600 text-sm mt-4 leading-relaxed font-light">{getL(currentProduct.shortDesc)}</p>
+                        </div>
+
+                        {/* Affiliate Button action */}
+                        <div className="pt-6 border-t border-slate-100 space-y-3">
+                          <p className="text-xs text-slate-500 italic">
+                            {t('affiliateActionDesc')}
+                          </p>
+                          <a 
+                            href={currentProduct.affiliateUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => handleAffiliateClick(currentProduct.id, getL(currentProduct.name))}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-4 rounded-xl font-bold text-center flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
+                          >
+                            <ShoppingBag className="w-5 h-5" />
+                            <span>{t('buyNowButton')}</span>
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Extended product details (benefits, ingredients, suitableFor) */}
+                    <div className="border-t border-slate-200 bg-slate-50/30 p-6 sm:p-10">
+                      <div className="grid md:grid-cols-3 gap-8">
+                        
+                        {/* Benefits */}
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+                          <div className="flex items-center space-x-2 text-emerald-700">
+                            <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                            <h3 className="font-bold text-slate-900 text-lg">{t('benefitsTitle')}</h3>
+                          </div>
+                          <ul className="space-y-2 text-sm text-slate-600 leading-relaxed">
+                            {(currentProduct.benefits[lang] || currentProduct.benefits['th'] || []).map((benefit, idx) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="text-emerald-500 mr-2 font-bold">•</span>
+                                <span>{benefit}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Ingredients */}
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+                          <div className="flex items-center space-x-2 text-teal-700">
+                            <Sparkles className="w-5 h-5 flex-shrink-0" />
+                            <h3 className="font-bold text-slate-900 text-lg">{t('ingredientsTitle')}</h3>
+                          </div>
+                          <ul className="space-y-2 text-sm text-slate-600 leading-relaxed">
+                            {(currentProduct.ingredients[lang] || currentProduct.ingredients['th'] || []).map((ing, idx) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="text-teal-500 mr-2 font-bold">•</span>
+                                <span>{ing}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Suitable targets */}
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+                          <div className="flex items-center space-x-2 text-indigo-700">
+                            <User className="w-5 h-5 flex-shrink-0" />
+                            <h3 className="font-bold text-slate-900 text-lg">{t('suitableForTitle')}</h3>
+                          </div>
+                          <ul className="space-y-2 text-sm text-slate-600 leading-relaxed">
+                            {(currentProduct.suitableFor[lang] || currentProduct.suitableFor['th'] || []).map((user, idx) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="text-indigo-500 mr-2 font-bold">•</span>
+                                <span>{user}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Blog Posts Index */}
+            {currentPage === 'blog' && (
+              <div className="py-12 bg-slate-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="mb-10 text-center max-w-2xl mx-auto">
+                    <span className="text-xs font-bold text-emerald-600 tracking-wider uppercase block mb-1">EcoHealth Blog</span>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                      {lang === 'th' ? 'สาระน่ารู้คู่สุขภาพดี' : 'Blog chia sẻ kiến thức Y khoa khoa học'}
+                    </h1>
+                    <p className="mt-2 text-slate-500">
+                      {lang === 'th' 
+                        ? 'บทความให้ความรู้จากแพทย์และเภสัชกร เพื่อปรับปรุงไลฟ์สไตล์อย่างถูกต้อง' 
+                        : 'Các bài phân tích khoa học dễ hiểu từ chuyên gia dinh dưỡng để nâng tầm thể chất mỗi ngày.'}
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {blogPosts.map((post) => (
+                      <div 
+                        key={post.id} 
+                        className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+                      >
+                        <div className="relative pt-[55%] overflow-hidden bg-slate-100">
+                          <img 
+                            src={post.image} 
+                            alt={getL(post.title)} 
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-4 left-4 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                            {getL(post.category)}
+                          </span>
+                        </div>
+                        <div className="p-6 flex flex-col flex-grow">
+                          <div className="flex items-center space-x-4 text-xs text-slate-400 mb-3">
+                            <span className="flex items-center"><User className="w-3.5 h-3.5 mr-1" />{getL(post.author)}</span>
+                            <span className="flex items-center"><Clock className="w-3.5 h-3.5 mr-1" />{getL(post.readTime)}</span>
+                          </div>
+                          <h2 
+                            onClick={() => navigateTo('blog-detail', post.id)}
+                            className="font-bold text-xl text-slate-900 hover:text-emerald-600 cursor-pointer transition-colors line-clamp-2"
+                          >
+                            {getL(post.title)}
+                          </h2>
+                          <p className="text-sm text-slate-500 mt-2 line-clamp-3 flex-grow">{getL(post.summary)}</p>
+                          
+                          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-xs text-slate-400">{post.date}</span>
+                            <button 
+                              onClick={() => navigateTo('blog-detail', post.id)}
+                              className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center"
+                            >
+                              {t('readMore')} <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Blog Post Detail Page */}
+            {currentPage === 'blog-detail' && (
+              <div className="py-12 bg-slate-50">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <button 
+                    onClick={() => navigateTo('blog')}
+                    className="inline-flex items-center space-x-1.5 text-slate-600 hover:text-emerald-600 font-semibold text-sm mb-6 transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>{t('backToBlogs')}</span>
+                  </button>
+
+                  <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-lg p-6 sm:p-10 space-y-6">
+                    <span className="inline-block bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      {getL(currentBlog.category)}
+                    </span>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 leading-tight tracking-tight">
+                      {getL(currentBlog.title)}
+                    </h1>
+
+                    <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-500 pb-6 border-b border-slate-200">
+                      <span className="flex items-center font-medium text-slate-800">
+                        <User className="w-4 h-4 mr-1.5 text-emerald-600" />
+                        {t('writtenBy')}: {getL(currentBlog.author)}
+                      </span>
+                      <span className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1.5 text-slate-400" />
+                        {getL(currentBlog.readTime)}
+                      </span>
+                      <span className="text-slate-300">|</span>
+                      <span>{t('publishedOn')}: {currentBlog.date}</span>
+                    </div>
+
+                    <div className="relative rounded-2xl overflow-hidden aspect-video bg-slate-100 border border-slate-200">
+                      <img 
+                        src={currentBlog.image} 
+                        alt={getL(currentBlog.title)} 
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Rendering multilingual markdown blog content */}
+                    <div className="prose max-w-none text-slate-700 leading-relaxed text-sm sm:text-base space-y-4 font-light">
+                      {(getL(currentBlog.content)).split('\n\n').map((paragraph, index) => {
+                        const trimmed = paragraph.trim();
+                        if (!trimmed) return null;
+                        if (trimmed.startsWith('###')) {
+                          return <h3 key={index} className="text-xl font-bold text-slate-900 pt-4 pb-2">{trimmed.replace('###', '').trim()}</h3>;
+                        }
+                        if (trimmed.startsWith('####')) {
+                          return <h4 key={index} className="text-lg font-bold text-slate-900 pt-3 pb-1">{trimmed.replace('####', '').trim()}</h4>;
+                        }
+                        if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
+                          return (
+                            <ul key={index} className="list-disc pl-5 space-y-1 my-2">
+                              {trimmed.split('\n').map((li, i) => (
+                                <li key={i}>{li.replace(/^[\s-*]+/, '')}</li>
+                              ))}
+                            </ul>
+                          );
+                        }
+                        return <p key={index}>{trimmed}</p>;
+                      })}
+                    </div>
+
+                    {/* Related recommended products inside blog */}
+                    {currentBlog.relatedProducts && currentBlog.relatedProducts.length > 0 && (
+                      <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-6 mt-10">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <Sparkles className="w-5 h-5 text-emerald-700" />
+                          <h4 className="font-bold text-slate-950 text-base">{t('relatedProductsInBlog')}</h4>
+                        </div>
+                        {products.filter(p => currentBlog.relatedProducts.includes(p.id)).map(prod => (
+                          <div key={prod.id} className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-5 bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-3">
+                            <img src={prod.image} alt={getL(prod.name)} className="w-20 h-20 rounded-lg object-cover bg-slate-100 border flex-shrink-0" />
+                            <div className="flex-grow text-center sm:text-left">
+                              <h5 className="font-bold text-slate-900 text-sm sm:text-base">{getL(prod.name)}</h5>
+                              <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">{getL(prod.shortDesc)}</p>
+                              <span className="text-sm font-bold text-emerald-700 block mt-1">{prod.price} ฿</span>
+                            </div>
+                            <button 
+                              onClick={() => navigateTo('product-detail', prod.id)}
+                              className="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap"
+                            >
+                              {t('readReviewDetail')}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* About Page */}
+            {currentPage === 'about' && (
+              <div className="py-12 bg-slate-50">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
+                    <div className="relative bg-emerald-900 text-white py-12 px-6 sm:px-12 text-center">
+                      <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                        {lang === 'th' ? 'เกี่ยวกับพวกเรา EcoHealth' : 'Giới thiệu về EcoHealth'}
+                      </h1>
+                      <p className="mt-2 text-emerald-200 max-w-2xl mx-auto text-sm sm:text-base font-light">
+                        {lang === 'th'
+                          ? 'พันธกิจหลักของเราคือการเป็นสะพานเชื่อมให้ผู้ใช้เข้าถึงแหล่งข้อมูลสุขภาพที่ถูกต้องและปลอดภัยอย่างเป็นกลาง'
+                          : 'Sứ mệnh hàng đầu của chúng tôi là trở thành cầu nối giúp người dùng tiếp cận nguồn thông tin khoa học sức khỏe chuẩn xác nhất.'}
+                      </p>
+                    </div>
+
+                    <div className="p-6 sm:p-10 space-y-10">
+                      <div className="grid md:grid-cols-2 gap-8 items-center">
+                        <div className="space-y-4">
+                          <h2 className="text-2xl font-bold text-slate-900">
+                            {lang === 'th' ? 'ตอบโจทย์ความน่าเชื่อถือและการดูแลที่ปลอดภัย' : 'Giải quyết sự băn khoăn về chất lượng và độ an toàn'}
+                          </h2>
+                          <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-light">
+                            {lang === 'th'
+                              ? 'ในตลาดผลิตภัณฑ์สุขภาพที่มีการอวดอ้างสรรพคุณเกินจริงมากมาย การมองหาสินค้าที่เหมาะสมจึงเป็นเรื่องยาก ทีมงานของเราศึกษาเจาะลึกวิเคราะห์ส่วนประกอบทางคลินิกอย่างละเอียดและเชื่อมโยngตรงกับลิงก์ผู้ผลิตแบรนด์ลิขสิทธิ์แท้'
+                              : 'Trong thời kỳ thông tin bùng nổ, thị trường ngập tràn các sản phẩm kém chất lượng và quảng cáo thổi phồng công dụng. Đội ngũ y khoa của chúng tôi phân tích chi tiết dữ liệu lâm sàng hoạt chất, cam kết chỉ đề xuất liên kết tới các hãng phân phối chính thức.'}
+                          </p>
+                        </div>
+                        <img 
+                          src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800" 
+                          alt="Medical expert team" 
+                          className="rounded-2xl shadow-md border object-cover"
+                        />
+                      </div>
+
+                      <div className="bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200 space-y-6">
+                        <h3 className="text-xl font-bold text-slate-900 text-center">
+                          {lang === 'th' ? '3 ค่านิยมหลักที่เรายึดมั่น' : '3 Giá trị cốt lõi hành động'}
+                        </h3>
+                        <div className="grid md:grid-cols-3 gap-6">
+                          <div className="bg-white p-5 rounded-xl border border-slate-200/60 shadow-sm text-center">
+                            <span className="text-3xl mb-2 block">🔬</span>
+                            <h4 className="font-bold text-slate-950 mb-1">{lang === 'th' ? 'วิทยาศาสตร์รองรับ' : 'Y học thực chứng'}</h4>
+                            <p className="text-xs text-slate-500">
+                              {lang === 'th' ? 'ข้อมูลส่วนผสมอ้างอิงและได้รับการรับรองทางการแพทย์' : 'Mọi thông tin thành phần đều có báo cáo khoa học uy tín bảo chứng.'}
+                            </p>
+                          </div>
+                          <div className="bg-white p-5 rounded-xl border border-slate-200/60 shadow-sm text-center">
+                            <span className="text-3xl mb-2 block">🤝</span>
+                            <h4 className="font-bold text-slate-950 mb-1">{lang === 'th' ? 'ความโปร่งใสเป็นหลัก' : 'Minh bạch tuyệt đối'}</h4>
+                            <p className="text-xs text-slate-500">
+                              {lang === 'th' ? 'ชี้แจงค่าคอมมิชชั่นอย่างชัดเจน ไม่มีการแฝงบวกราคาสินค้าเพิ่ม' : 'Minh bạch chính sách Affiliate, đảm bảo khách hàng mua đúng giá gốc của hãng.'}
+                            </p>
+                          </div>
+                          <div className="bg-white p-5 rounded-xl border border-slate-200/60 shadow-sm text-center">
+                            <span className="text-3xl mb-2 block">🌿</span>
+                            <h4 className="font-bold text-slate-950 mb-1">{lang === 'th' ? 'ปลอดภัยต่อตับและไต' : 'Lành tính từ tự nhiên'}</h4>
+                            <p className="text-xs text-slate-500">
+                              {lang === 'th' ? 'แนะนําสารสกัดออร์แกนิก ปราศจากสารตกค้างทางเคมีสะสม' : 'Ưu tiên thành phần chiết xuất organic nhằm giảm tải áp lực thải độc lên Gan Thận.'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Disclaimer & Affiliate Policy Page */}
+            {currentPage === 'disclaimer' && (
+              <div className="py-12 bg-slate-50">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-10 space-y-8">
+                    <div className="flex items-center space-x-3 text-emerald-700 pb-4 border-b">
+                      <ShieldAlert className="w-8 h-8 flex-shrink-0" />
+                      <div>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                          {lang === 'th' ? 'ข้อตกลงและเงื่อนไขแอฟฟิลิเอต / ข้อจำกัดทางการแพทย์' : 'Chính sách liên kết (Affiliate Policy) & Miễn trừ trách nhiệm'}
+                        </h1>
+                        <p className="text-slate-500 text-xs sm:text-sm mt-0.5">Last Updated: May 2026</p>
+                      </div>
+                    </div>
+
+                    <section className="space-y-4">
+                      <h2 className="text-xl font-bold text-slate-950">
+                        {lang === 'th' ? '1. การเปิดเผยข้อมูลความเชื่อมโยงแอฟฟิลิเอต' : '1. Công bố thông tin tiếp thị liên kết (Affiliate Disclosure)'}
+                      </h2>
+                      <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-3 font-light">
+                        <p>
+                          {lang === 'th'
+                            ? 'เว็บไซต์ของเราทำงานเป็นระบบผู้แนะนำวิเคราะห์ข้อมูลข่าวสารเท่านั้น เราไม่มีคลังสินค้าหรือจัดส่งผลิตภัณฑ์ด้วยตนเองทั้gสิ้น ลิงก์สินค้าภายในเว็บเป็นลิงก์พันธมิตร (Affiliate Link) ชี้ตรงไปยังแบรนด์ออฟฟิเชียลโดยตรง'
+                            : 'Website của chúng tôi hoạt động theo mô hình đánh giá và khuyên dùng sản phẩm. Chúng tôi không trực tiếp bán hàng, lưu trữ kho bãi hay giao hàng. Các đường link được tích hợp là link affiliate dẫn đến các sàn thương mại điện tử uy tín.'}
+                        </p>
+                        <p>
+                          {lang === 'th'
+                            ? 'เมื่อลูกค้ากดสั่งซื้อผ่านช่องทางแนะนำนี้ ทางเราจะได้รับค่าคอมมิชชั่นเล็กน้อยจากระบบ ซึ่งช่วยรักษางบประมาณในการดำเนินงานดูแลเว็บไซต์โดยไม่มีการเรียกเก็บส่วนต่างหรือบวกราคาสินค้าเพิ่มจากลูกค้าใดๆ'
+                            : 'Khi bạn đặt mua thông qua các link giới thiệu này, đối tác TMĐT sẽ trích một phần hoa hồng nhỏ để duy trì hoạt động nghiên cứu của EcoHealth. Khách hàng hoàn toàn không phải chi trả thêm bất cứ khoản phụ phí nào.'}
+                        </p>
+                      </div>
+                    </section>
+
+                    <section className="space-y-4">
+                      <h2 className="text-xl font-bold text-slate-950">
+                        {lang === 'th' ? '2. ข้อจำกัดความรับผิดชอบทางการแพทย์' : '2. Miễn trừ trách nhiệm y tế (Medical Disclaimer)'}
+                      </h2>
+                      <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-3 font-light">
+                        <p>
+                          {lang === 'th'
+                            ? 'ข้อมูลความรู้และคำอธิบายส่วนประกอบทั้งหมดเป็นข้อมูลเพื่อการศึกษาและพัฒนาตนเองเบื้องต้นเท่านั้น ไม่สามารถนำมาใช้แทนการวินิจฉัยเฉพาะทางจากแพทย์หรือการรักษาโรคได้โดยตรง ผลิตภัณฑ์เสริมอาหารทั้งหมดไม่ใช่ยารักษาโรค กรุณาปรึกษาแพทย์ก่อนเริ่มใช้'
+                            : 'Mọi bài viết chia sẻ, bảng thành phần dinh dưỡng và tư vấn trên trang chỉ mang tính chất tham khảo, không có tác dụng thay thế chẩn đoán bệnh lý, chỉ định điều trị y khoa chuyên nghiệp. Sản phẩm bổ sung không phải là thuốc và không thay thế thuốc chữa bệnh.'}
+                        </p>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ==================== VIETNAMESE ADMIN PANEL VIEW ==================== */}
+        {currentView === 'admin' && (
+          <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row animate-fade-in">
+            
+            {/* Admin Sidebar Panel (In Vietnamese as requested for easy management!) */}
+            <aside className="w-full md:w-64 bg-slate-950 border-r border-slate-800 p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center space-x-3 mb-8">
+                  <div className="bg-emerald-600 text-white p-2 rounded-xl">
+                    <Settings className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-white text-base">Quản trị viên Việt Nam</h2>
+                    <span className="text-xs text-slate-500">Đồng bộ Hệ thống Thái Lan</span>
+                  </div>
+                </div>
+
+                <nav className="space-y-2">
+                  <button
+                    onClick={() => setActiveAdminTab('overview')}
+                    className={`w-full text-left px-4 py-3 rounded-xl flex items-center space-x-3 font-semibold text-sm transition-all ${
+                      activeAdminTab === 'overview' 
+                        ? 'bg-emerald-600 text-white shadow-lg' 
+                        : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                    }`}
+                  >
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Báo cáo doanh số</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveAdminTab('products')}
+                    className={`w-full text-left px-4 py-3 rounded-xl flex items-center space-x-3 font-semibold text-sm transition-all ${
+                      activeAdminTab === 'products' 
+                        ? 'bg-emerald-600 text-white shadow-lg' 
+                        : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                    }`}
+                  >
+                    <Layers className="w-4 h-4" />
+                    <span>Sản phẩm ({products.length})</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveAdminTab('blogs')}
+                    className={`w-full text-left px-4 py-3 rounded-xl flex items-center space-x-3 font-semibold text-sm transition-all ${
+                      activeAdminTab === 'blogs' 
+                        ? 'bg-emerald-600 text-white shadow-lg' 
+                        : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                    }`}
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Bài viết Blog ({blogPosts.length})</span>
+                  </button>
+                </nav>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-slate-800 space-y-4">
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-1">Doanh thu tạm tính</span>
+                  <span className="text-lg font-black text-emerald-400 block">{simulatedRevenue.toLocaleString('vi-VN')} ฿</span>
+                  <span className="text-[10px] text-slate-400 leading-relaxed block mt-1">Phát sinh từ lượt nhấp chuột khách Thái</span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setCurrentView('user');
+                    triggerNotification('Đã quay lại trang cửa hàng.');
+                  }}
+                  className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition-all text-center"
+                >
+                  Thoát quản trị
+                </button>
+              </div>
+            </aside>
+
+            {/* Admin Dashboard Body Content */}
+            <section className="flex-grow p-6 sm:p-10 space-y-8 overflow-y-auto">
+              
+              {/* TAB 1: OVERVIEW STATISTICS */}
+              {activeAdminTab === 'overview' && (
+                <div className="space-y-8 animate-fade-in">
+                  <div>
+                    <h1 className="text-3xl font-extrabold text-white tracking-tight">Thống kê hiệu quả hoạt động</h1>
+                    <p className="text-slate-400 text-sm mt-1">Theo dõi tương tác trực tiếp của người dùng tại thị trường Thái Lan để tối ưu hóa vị trí đặt link.</p>
+                  </div>
+
+                  {/* Stat HUD Cards */}
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Tổng sản phẩm</span>
+                        <Layers className="w-5 h-5 text-emerald-500" />
+                      </div>
+                      <span className="text-3xl font-black text-white">{products.length}</span>
+                      <span className="text-slate-500 text-xs block mt-2">Phân bổ đều 6 nhóm chức năng</span>
+                    </div>
+
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Lượt click link</span>
+                        <MousePointer className="w-5 h-5 text-indigo-500" />
+                      </div>
+                      <span className="text-3xl font-black text-white">
+                        {Object.values(clicksTracker).reduce((a, b) => a + b, 0)}
+                      </span>
+                      <span className="text-slate-500 text-xs block mt-2">Dẫn đến Shopee / Lazada Thái</span>
+                    </div>
+
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Hoa hồng tạm tính</span>
+                        <DollarSign className="w-5 h-5 text-amber-500" />
+                      </div>
+                      <span className="text-3xl font-black text-emerald-400">
+                        {simulatedRevenue.toLocaleString('vi-VN')} ฿
+                      </span>
+                      <span className="text-slate-500 text-xs block mt-2">Tính trung bình 50 Baht/click</span>
+                    </div>
+
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Tổng bài viết</span>
+                        <FileText className="w-5 h-5 text-teal-500" />
+                      </div>
+                      <span className="text-3xl font-black text-white">{blogPosts.length}</span>
+                      <span className="text-slate-500 text-xs block mt-2">Bản dịch song ngữ hoàn tất</span>
+                    </div>
+                  </div>
+
+                  {/* Affiliate Performance table */}
+                  <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
+                    <div className="p-6 border-b border-slate-800 flex justify-between items-center">
+                      <h3 className="font-bold text-white text-base">Thống kê lượt click mua hàng theo từng sản phẩm</h3>
+                      <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full font-bold">Dữ liệu thời gian thực</span>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-800 bg-slate-900/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            <th className="p-4 pl-6">Sản phẩm (Tiếng Việt / Thái)</th>
+                            <th className="p-4">Giá bán</th>
+                            <th className="p-4 text-center">Số lượt click chuyển hướng</th>
+                            <th className="p-4 text-right pr-6">Hoa hồng tích lũy ước tính</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800/60 text-sm">
+                          {products.map(prod => {
+                            const clicks = clicksTracker[prod.id] || 0;
+                            const revenue = clicks * 50;
+                            return (
+                              <tr key={prod.id} className="hover:bg-slate-900/30 transition-colors">
+                                <td className="p-4 pl-6 font-bold text-white flex items-center space-x-3">
+                                  <img src={prod.image} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" alt="" />
+                                  <div>
+                                    <span className="block text-white font-medium">{prod.name.vi}</span>
+                                    <span className="block text-xs text-slate-400 font-light font-sans">{prod.name.th}</span>
+                                  </div>
+                                </td>
+                                <td className="p-4 font-semibold text-slate-300">{prod.price} ฿</td>
+                                <td className="p-4 text-center font-bold text-indigo-400">{clicks}</td>
+                                <td className="p-4 text-right pr-6 font-bold text-emerald-400">{revenue.toLocaleString('vi-VN')} ฿</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: PRODUCT CRUD MANAGEMENT */}
+              {activeAdminTab === 'products' && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <div>
+                      <h1 className="text-3xl font-extrabold text-white tracking-tight">Danh sách Sản phẩm</h1>
+                      <p className="text-slate-400 text-sm mt-1">Cập nhật sản phẩm, thông tin hoạt chất song ngữ TH / VI và link tiếp thị liên kết.</p>
+                    </div>
+                    <button
+                      onClick={() => openProductModal(null)}
+                      className="mt-4 sm:mt-0 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center space-x-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Thêm sản phẩm song ngữ</span>
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-800 bg-slate-900/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            <th className="p-4 pl-6">Sản phẩm</th>
+                            <th className="p-4">Danh mục</th>
+                            <th className="p-4">Giá đề xuất</th>
+                            <th className="p-4">Đường link Affiliate</th>
+                            <th className="p-4 text-right pr-6">Hành động</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800/60 text-sm">
+                          {products.map(prod => (
+                            <tr key={prod.id} className="hover:bg-slate-900/30 transition-colors">
+                              <td className="p-4 pl-6 font-bold text-white flex items-center space-x-3">
+                                <img src={prod.image} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" alt="" />
+                                <div>
+                                  <span className="block">{prod.name.vi}</span>
+                                  <span className="text-[10px] text-slate-500 font-mono block mt-0.5">ID: {prod.id}</span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-slate-400 capitalize">{prod.category}</td>
+                              <td className="p-4 font-semibold text-emerald-400">{prod.price} ฿</td>
+                              <td className="p-4 font-mono text-xs text-slate-500 truncate max-w-xs">{prod.affiliateUrl}</td>
+                              <td className="p-4 text-right pr-6 space-x-2 whitespace-nowrap">
+                                <button
+                                  onClick={() => openProductModal(prod)}
+                                  className="p-2 bg-indigo-900/50 hover:bg-indigo-900 text-indigo-300 rounded-lg transition-colors inline-flex items-center"
+                                  title="Sửa thông tin sản phẩm"
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => deleteProduct(prod.id, prod.name.vi)}
+                                  className="p-2 bg-rose-900/50 hover:bg-rose-900 text-rose-300 rounded-lg transition-colors inline-flex items-center"
+                                  title="Xóa sản phẩm"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: BLOG CRUD MANAGEMENT */}
+              {activeAdminTab === 'blogs' && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <div>
+                      <h1 className="text-3xl font-extrabold text-white tracking-tight">Quản lý bài viết chia sẻ</h1>
+                      <p className="text-slate-400 text-sm mt-1">Xuất bản bài viết kiến thức để giáo dục thị trường và kéo traffic từ SEO, tăng lượt nhấp chuột affiliate.</p>
+                    </div>
+                    <button
+                      onClick={() => openBlogModal(null)}
+                      className="mt-4 sm:mt-0 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center space-x-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Viết bài viết mới</span>
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-800 bg-slate-900/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            <th className="p-4 pl-6">Tiêu đề bài viết</th>
+                            <th className="p-4">Chuyên mục</th>
+                            <th className="p-4">Tác giả</th>
+                            <th className="p-4">Ngày đăng</th>
+                            <th className="p-4 text-right pr-6">Thao tác</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800/60 text-sm">
+                          {blogPosts.map(blog => (
+                            <tr key={blog.id} className="hover:bg-slate-900/30 transition-colors">
+                              <td className="p-4 pl-6 font-bold text-white flex items-center space-x-3">
+                                <img src={blog.image} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" alt="" />
+                                <div className="max-w-md">
+                                  <span className="block truncate">{blog.title.vi}</span>
+                                  <span className="text-[10px] text-slate-500 font-mono block mt-0.5">ID: {blog.id} | {blog.readTime.vi}</span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-slate-400 capitalize">{blog.category.vi}</td>
+                              <td className="p-4 text-slate-400">{blog.author.vi}</td>
+                              <td className="p-4 text-slate-400">{blog.date}</td>
+                              <td className="p-4 text-right pr-6 space-x-2 whitespace-nowrap">
+                                <button
+                                  onClick={() => openBlogModal(blog)}
+                                  className="p-2 bg-indigo-900/50 hover:bg-indigo-900 text-indigo-300 rounded-lg transition-colors inline-flex items-center"
+                                  title="Chỉnh sửa bài viết"
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => deleteBlog(blog.id, blog.title.vi)}
+                                  className="p-2 bg-rose-900/50 hover:bg-rose-900 text-rose-300 rounded-lg transition-colors inline-flex items-center"
+                                  title="Xóa bài viết"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+          </div>
+        )}
+
+      </main>
+
+      {/* FOOTER SECTION */}
+      <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
+            
+            {/* Logo and Thai disclaimer summary */}
+            <div className="md:col-span-5 space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="bg-emerald-600 text-white p-2 rounded-xl">
+                  <Heart className="w-5 h-5" />
+                </div>
+                <span className="text-xl font-bold text-white tracking-tight">Eco<span className="text-emerald-500">Health</span></span>
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed font-light">
+                {t('footerDesc')}
+              </p>
+              <p className="text-xs text-slate-500 font-light">
+                {t('footerMedicalWarning')}
+              </p>
+            </div>
+
+            {/* Quick links to categories */}
+            <div className="md:col-span-3 space-y-4">
+              <h3 className="text-sm font-bold text-white tracking-wider uppercase">Categories</h3>
+              <ul className="space-y-2 text-sm font-light">
+                <li><button onClick={() => navigateTo('catalog', null, 'digestive')} className="hover:text-emerald-500 transition-colors">🍃 {t('cat_digestive')}</button></li>
+                <li><button onClick={() => navigateTo('catalog', null, 'men30')} className="hover:text-emerald-500 transition-colors">🦁 {t('cat_men30')}</button></li>
+                <li><button onClick={() => navigateTo('catalog', null, 'joints')} className="hover:text-emerald-500 transition-colors">🦴 {t('cat_joints')}</button></li>
+                <li><button onClick={() => navigateTo('catalog', null, 'sleep')} className="hover:text-emerald-500 transition-colors">🌙 {t('cat_sleep')}</button></li>
+                <li><button onClick={() => navigateTo('catalog', null, 'weight')} className="hover:text-emerald-500 transition-colors">🧘‍♀️ {t('cat_weight')}</button></li>
+                <li><button onClick={() => navigateTo('catalog', null, 'liver')} className="hover:text-emerald-500 transition-colors">🧪 {t('cat_liver')}</button></li>
+              </ul>
+            </div>
+
+            {/* Contact details */}
+            <div className="md:col-span-4 space-y-4">
+              <h3 className="text-sm font-bold text-white tracking-wider uppercase">{t('footerContactTitle')}</h3>
+              <ul className="space-y-3.5 text-sm font-light">
+                <li className="flex items-start space-x-2.5">
+                  <MapPin className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <span>Pathum Wan, Bangkok, Thailand 10330</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Phone className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  <span>+66 (0) 2345 6789</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Mail className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  <span>contact@ecohealth.co.th</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-900 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+            <p className="text-center sm:text-left">
+              &copy; {new Date().getFullYear()} EcoHealth. {t('copyright')}
+            </p>
+            <div className="flex space-x-4 mt-4 sm:mt-0">
+              <button onClick={() => navigateTo('disclaimer')} className="hover:text-emerald-500 transition-colors underline">{t('disclaimer')}</button>
+              <span>|</span>
+              <button 
+                onClick={() => {
+                  setCurrentView(currentView === 'user' ? 'admin' : 'user');
+                  if (currentView === 'user') {
+                    triggerNotification('Đã mở bảng điều khiển Quản trị hệ thống.');
+                  }
+                }} 
+                className="hover:text-emerald-500 transition-colors underline font-bold"
+              >
+                {t('adminAccess')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* ==================== CREATE / EDIT PRODUCT MODAL (BILINGUAL) ==================== */}
+      {isProductModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-scale-up">
+            <div className="px-6 py-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white flex items-center space-x-2">
+                <Settings className="w-5 h-5 text-emerald-500" />
+                <span>{editingProduct ? `Cấu hình sản phẩm: ${editingProduct.name.vi}` : 'Thêm sản phẩm song ngữ (TH - VI) mới'}</span>
+              </h2>
+              <button 
+                onClick={() => setIsProductModalOpen(false)}
+                className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={saveProduct} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-slate-300">
+              
+              {/* Product Names (TH and VI) */}
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="space-y-1 sm:col-span-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Tên Tiếng Thái (ภาษาไทย) *</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="เช่น Bio-Digest Pro..."
+                    value={productForm.nameTh}
+                    onChange={(e) => setProductForm({...productForm, nameTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1 sm:col-span-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Tên Tiếng Việt *</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="Men vi sinh cao cấp..."
+                    value={productForm.nameVi}
+                    onChange={(e) => setProductForm({...productForm, nameVi: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Giá bán (฿ Baht) *</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="490"
+                    value={productForm.price}
+                    onChange={(e) => setProductForm({...productForm, price: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Category and Affiliate URL */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Nhóm chức năng sức khỏe</label>
+                  <select
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    value={productForm.category}
+                    onChange={(e) => setProductForm({...productForm, category: e.target.value})}
+                  >
+                    <option value="digestive">🍃 Hệ tiêu hóa & Đường ruột</option>
+                    <option value="men30">🦁 Sức khỏe nam giới 30+</option>
+                    <option value="joints">🦴 Xương khớp & Khớp động</option>
+                    <option value="sleep">🌙 Giấc ngủ & Thư giãn thần kinh</option>
+                    <option value="weight">🧘‍♀️ Kiểm soát cân nặng & Vóc dáng</option>
+                    <option value="liver">🧪 Thải độc gan & Thận</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Đường dẫn giới thiệu Affiliate (Shopee/Lazada)</label>
+                  <input
+                    type="url"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="https://shopee.co.th/..."
+                    value={productForm.affiliateUrl}
+                    onChange={(e) => setProductForm({...productForm, affiliateUrl: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Image URL & File Upload */}
+              <div className="space-y-2 border border-slate-800/80 p-4 rounded-2xl bg-slate-950/45">
+                <label className="text-xs font-bold text-slate-400 uppercase block">Hình ảnh Sản phẩm *</label>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-[11px] text-slate-500 block mb-1">Cách 1: Tải ảnh trực tiếp từ máy của bạn</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, (base64) => setProductForm({...productForm, image: base64}))}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-400 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-500 block mb-1">Cách 2: Hoặc dán địa chỉ liên kết ảnh (URL)</span>
+                    <input
+                      type="url"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="https://images.unsplash.com/..."
+                      value={productForm.image}
+                      onChange={(e) => setProductForm({...productForm, image: e.target.value})}
+                    />
+                  </div>
+                </div>
+                {productForm.image && (
+                  <div className="mt-2 flex items-center space-x-3 bg-slate-950 p-2 rounded-lg border border-slate-800 w-fit">
+                    <span className="text-xs text-slate-500">Xem trước ảnh:</span>
+                    <img src={productForm.image} className="w-12 h-12 rounded-lg object-cover border border-slate-700" alt="Preview" />
+                  </div>
+                )}
+              </div>
+
+              {/* Short Descriptions */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Mô tả ngắn Tiếng Thái (Short Description TH)</label>
+                  <textarea
+                    rows="2"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="ปรับสมดุลลำไส้..."
+                    value={productForm.shortDescTh}
+                    onChange={(e) => setProductForm({...productForm, shortDescTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Mô tả ngắn Tiếng Việt (Short Description VI)</label>
+                  <textarea
+                    rows="2"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="Cân bằng hệ tiêu hóa..."
+                    value={productForm.shortDescVi}
+                    onChange={(e) => setProductForm({...productForm, shortDescVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Benefits (Bilingual) */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Công dụng Tiếng Thái (Mỗi ý một dòng)</label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={productForm.benefitsTh}
+                    onChange={(e) => setProductForm({...productForm, benefitsTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Công dụng Tiếng Việt (Mỗi ý một dòng)</label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={productForm.benefitsVi}
+                    onChange={(e) => setProductForm({...productForm, benefitsVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Ingredients (Bilingual) */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Thành phần Tiếng Thái (Mỗi ý một dòng)</label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={productForm.ingredientsTh}
+                    onChange={(e) => setProductForm({...productForm, ingredientsTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Thành phần Tiếng Việt (Mỗi ý một dòng)</label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={productForm.ingredientsVi}
+                    onChange={(e) => setProductForm({...productForm, ingredientsVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* SuitableFor (Bilingual) */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Khuyên dùng Tiếng Thái (Mỗi ý một dòng)</label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={productForm.suitableForTh}
+                    onChange={(e) => setProductForm({...productForm, suitableForTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Khuyên dùng Tiếng Việt (Mỗi ý một dòng)</label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={productForm.suitableForVi}
+                    onChange={(e) => setProductForm({...productForm, suitableForVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setIsProductModalOpen(false)}
+                  className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-all"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-all shadow-md"
+                >
+                  {editingProduct ? 'Cập nhật sản phẩm' : 'Lưu sản phẩm mới'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== CREATE / EDIT BLOG MODAL (BILINGUAL) ==================== */}
+      {isBlogModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-5xl shadow-2xl overflow-hidden animate-scale-up">
+            <div className="px-6 py-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-emerald-500" />
+                <span>{editingBlog ? `Sửa bài viết: ${editingBlog.title.vi}` : 'Đăng tải bài viết song ngữ mới'}</span>
+              </h2>
+              <button 
+                onClick={() => setIsBlogModalOpen(false)}
+                className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={saveBlog} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-slate-300">
+              
+              {/* Blog Titles */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Tiêu đề Tiếng Thái *</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="เช่น 5 วิธีแก้อาการนอนไม่หลับ..."
+                    value={blogForm.titleTh}
+                    onChange={(e) => setBlogForm({...blogForm, titleTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Tiêu đề Tiếng Việt *</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="5 phương pháp cải thiện chứng mất ngủ..."
+                    value={blogForm.titleVi}
+                    onChange={(e) => setBlogForm({...blogForm, titleVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Author, Categories and Time read */}
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Tác giả (TH / VI)</label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="TH"
+                      value={blogForm.authorTh}
+                      onChange={(e) => setBlogForm({...blogForm, authorTh: e.target.value})}
+                    />
+                    <input
+                      type="text"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="VI"
+                      value={blogForm.authorVi}
+                      onChange={(e) => setBlogForm({...blogForm, authorVi: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Chuyên mục (TH / VI)</label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="TH"
+                      value={blogForm.categoryTh}
+                      onChange={(e) => setBlogForm({...blogForm, categoryTh: e.target.value})}
+                    />
+                    <input
+                      type="text"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="VI"
+                      value={blogForm.categoryVi}
+                      onChange={(e) => setBlogForm({...blogForm, categoryVi: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Thời gian đọc (TH / VI)</label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="TH (เช่น อ่าน 5 นาที)"
+                      value={blogForm.readTimeTh}
+                      onChange={(e) => setBlogForm({...blogForm, readTimeTh: e.target.value})}
+                    />
+                    <input
+                      type="text"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                      placeholder="VI (Đọc 5 phút)"
+                      value={blogForm.readTimeVi}
+                      onChange={(e) => setBlogForm({...blogForm, readTimeVi: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Image and Related Product IDs */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1 col-span-2">
+                  <div className="space-y-2 border border-slate-800/80 p-4 rounded-2xl bg-slate-950/45">
+                    <label className="text-xs font-bold text-slate-400 uppercase block">Ảnh bìa bài viết *</label>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-[11px] text-slate-500 block mb-1">Cách 1: Tải ảnh trực tiếp từ máy</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(e, (base64) => setBlogForm({...blogForm, image: base64}))}
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-400 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[11px] text-slate-500 block mb-1">Cách 2: Hoặc dán đường dẫn ảnh (URL)</span>
+                        <input
+                          type="url"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                          placeholder="https://images.unsplash.com/..."
+                          value={blogForm.image}
+                          onChange={(e) => setBlogForm({...blogForm, image: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    {blogForm.image && (
+                      <div className="mt-2 flex items-center space-x-3 bg-slate-950 p-2 rounded-lg border border-slate-800 w-fit">
+                        <span className="text-xs text-slate-500">Xem trước:</span>
+                        <img src={blogForm.image} className="w-16 h-10 rounded-lg object-cover border border-slate-700" alt="Preview" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="space-y-1 col-span-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Mã ID Sản phẩm đề xuất (Phân tách bằng dấu phẩy ',')</label>
+                  <input
+                    type="text"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500 text-sm text-white"
+                    placeholder="digest-01, sleep-01..."
+                    value={blogForm.relatedProducts}
+                    onChange={(e) => setBlogForm({...blogForm, relatedProducts: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Summaries */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Mô tả tóm tắt Tiếng Thái *</label>
+                  <textarea
+                    rows="2"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={blogForm.summaryTh}
+                    onChange={(e) => setBlogForm({...blogForm, summaryTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Mô tả tóm tắt Tiếng Việt *</label>
+                  <textarea
+                    rows="2"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white"
+                    value={blogForm.summaryVi}
+                    onChange={(e) => setBlogForm({...blogForm, summaryVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Content textareas */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Nội dung bài viết Tiếng Thái *</label>
+                  <textarea
+                    rows="8"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white font-mono"
+                    placeholder="เนื้อหาบทความ..."
+                    value={blogForm.contentTh}
+                    onChange={(e) => setBlogForm({...blogForm, contentTh: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase">Nội dung bài viết Tiếng Việt *</label>
+                  <textarea
+                    rows="8"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500 text-xs text-white font-mono"
+                    placeholder="Nội dung bài viết..."
+                    value={blogForm.contentVi}
+                    onChange={(e) => setBlogForm({...blogForm, contentVi: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setIsBlogModalOpen(false)}
+                  className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-all"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-all shadow-md"
+                >
+                  {editingBlog ? 'Cập nhật bài viết' : 'Xuất bản bài viết'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
